@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ProductResponse {
-    private Long id;
-    private String name;
-    private String description;
-    private int price;
-    private int deliveryFee;
-    private LocalDateTime createdAt;
+    private final Long id;
+    private final String name;
+    private final String description;
+    private final int price;
+    private final int deliveryFee;
+    private final LocalDateTime createdAt;
 
     @Builder
     private ProductResponse(Long id, String name, String description, int price, int deliveryFee, LocalDateTime createdAt) {

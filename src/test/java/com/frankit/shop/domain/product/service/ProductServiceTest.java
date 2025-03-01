@@ -4,6 +4,7 @@ import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductRepository;
+import com.frankit.shop.global.common.TypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static com.frankit.shop.global.common.TypeEnum.*;
 import static java.util.Optional.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -112,14 +114,13 @@ public class ProductServiceTest {
         Product product = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
 
         when(productRepository.findById(anyLong())).thenReturn(of(product));
-        doNothing().when(productRepository).delete(any(Product.class));
 
         //when
-        productService.deleteProduct(1L);
+        Product deletedProduct = productService.deleteProduct(1L);
 
         //then
+        assertThat(deletedProduct).extracting("delYn").isEqualTo(Y);
         verify(productRepository, times(1)).findById(anyLong());
-        verify(productRepository, times(1)).delete(any(Product.class));
     }
 
     @DisplayName("하나의 상품을 삭제 하는데 상품이 없다면 예외가 발생한다")
@@ -135,10 +136,9 @@ public class ProductServiceTest {
 
         //then
         verify(productRepository, times(1)).findById(anyLong());
-        verify(productRepository, never()).delete(any(Product.class));
     }
 
-    private static Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
+    private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
         return Product.create(productName, productDescription, price, deliveryFee);
     }
 }
