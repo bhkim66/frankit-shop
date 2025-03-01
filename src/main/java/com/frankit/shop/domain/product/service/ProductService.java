@@ -27,8 +27,14 @@ public class ProductService {
     }
 
     @Transactional
-    public Product updateProduct(long id, ProductRequest productRequest) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+    public Product updateProduct(Long productId, ProductRequest productRequest) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
         return product.update(productRequest);
+    }
+
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+        productRepository.delete(product);
     }
 }

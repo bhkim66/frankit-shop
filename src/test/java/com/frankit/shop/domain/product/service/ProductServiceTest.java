@@ -18,8 +18,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 import static java.util.Optional.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -78,10 +77,9 @@ public class ProductServiceTest {
     @Test
     void updateProduct() {
         //given
-        Product exisitedProduct = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
-        Product updateProduct = createProductStep("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
+        Product product = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
 
-        when(productRepository.findById(any(Long.class))).thenReturn(of(exisitedProduct));
+        when(productRepository.findById(anyLong())).thenReturn(of(product));
 
         //when
         ProductRequest productRequest = ProductRequest.of("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
@@ -90,12 +88,57 @@ public class ProductServiceTest {
         //then
         assertThat(result).extracting("name", "description", "price")
                 .containsExactly("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000);
-        verify(productRepository, times(1)).findById(any(Long.class));
+        verify(productRepository, times(1)).findById(anyLong());
+    }
+
+    @DisplayName("하나의 상품을 수정하려 할 때 찾는 상품이 없으면 예외가 발생한다")
+    @Test
+    void updateNotExistProduct() {
+        //given
+        when(productRepository.findById(anyLong())).thenReturn(empty());
+
+        //when
+        ProductRequest productRequest = ProductRequest.of("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
+        assertThatThrownBy(() -> productService.updateProduct(1L, productRequest)).hasMessageContaining("해당 상품이 존재하지 않습니다.");
+
+        //then
+        verify(productRepository, times(1)).findById(anyLong());
+    }
+
+    @DisplayName("하나의 상품을 삭제할 수 있다")
+    @Test
+    void deleteProduct() {
+        //given
+        Product product = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
+
+        when(productRepository.findById(anyLong())).thenReturn(of(product));
+        doNothing().when(productRepository).delete(any(Product.class));
+
+        //when
+        productService.deleteProduct(1L);
+
+        //then
+        verify(productRepository, times(1)).findById(anyLong());
+        verify(productRepository, times(1)).delete(any(Product.class));
+    }
+
+    @DisplayName("하나의 상품을 삭제 하는데 상품이 없다면 예외가 발생한다")
+    @Test
+    void deleteNotExistProduct() {
+        //given
+        Long productId = 1L;
+
+        when(productRepository.findById(anyLong())).thenReturn(empty());
+
+        //when
+        assertThatThrownBy(() -> productService.deleteProduct(productId)).hasMessageContaining("해당 상품이 존재하지 않습니다.");
+
+        //then
+        verify(productRepository, times(1)).findById(anyLong());
+        verify(productRepository, never()).delete(any(Product.class));
     }
 
     private static Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
         return Product.create(productName, productDescription, price, deliveryFee);
     }
-
-
 }
