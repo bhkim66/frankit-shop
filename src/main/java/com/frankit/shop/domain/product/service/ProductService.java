@@ -9,17 +9,26 @@ import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public Product createProduct(ProductRequest.Create productCreateRequest) {
-        return productRepository.save(productCreateRequest.toEntity());
-    }
-
     public Page<ProductResponse> getProducts(Pageable page) {
         return productRepository.findAll(page).map(ProductResponse::of);
+    }
+
+    @Transactional
+    public Product createProduct(ProductRequest productRequest) {
+        return productRepository.save(productRequest.toEntity());
+    }
+
+    @Transactional
+    public Product updateProduct(long id, ProductRequest productRequest) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+        return product.update(productRequest);
     }
 }

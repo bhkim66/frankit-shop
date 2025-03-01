@@ -1,10 +1,9 @@
-package com.frankit.shop.domain.product;
+package com.frankit.shop.domain.product.service;
 
 import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductRepository;
-import com.frankit.shop.domain.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static java.util.Optional.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
@@ -64,10 +64,10 @@ public class ProductServiceTest {
         Product product = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
 
         when(productRepository.save(any(Product.class))).thenReturn(product);
-        ProductRequest.Create productCreateRequest = ProductRequest.Create.of("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
+        ProductRequest productRequest = ProductRequest.of("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
 
         //when
-        Product savedProduct = productService.createProduct(productCreateRequest);
+        Product savedProduct = productService.createProduct(productRequest);
 
         //then
         assertThat(savedProduct.getName()).isEqualTo("컴퓨터");
@@ -76,12 +76,21 @@ public class ProductServiceTest {
 
     @DisplayName("하나의 상품을 수정할 수 있다")
     @Test
-    void test() {
+    void updateProduct() {
         //given
+        Product exisitedProduct = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
+        Product updateProduct = createProductStep("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
+
+        when(productRepository.findById(any(Long.class))).thenReturn(of(exisitedProduct));
 
         //when
+        ProductRequest productRequest = ProductRequest.of("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
+        Product result = productService.updateProduct(1L, productRequest);
 
         //then
+        assertThat(result).extracting("name", "description", "price")
+                .containsExactly("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000);
+        verify(productRepository, times(1)).findById(any(Long.class));
     }
 
     private static Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {

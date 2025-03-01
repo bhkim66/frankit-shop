@@ -1,5 +1,6 @@
 package com.frankit.shop.domain.product.entity;
 
+import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.global.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,5 +43,13 @@ public class Product extends BaseEntity {
                 .price(price)
                 .deliveryFee(deliveryFee)
                 .build();
+    }
+
+    public Product update(ProductRequest productRequest) {
+        this.name = productRequest.getName();
+        this.description = productRequest.getDescription();
+        this.price = productRequest.getPrice();
+        this.deliveryFee = productRequest.getDeliveryFee();
+        return this;
     }
 }

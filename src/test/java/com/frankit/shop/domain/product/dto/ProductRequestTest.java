@@ -37,8 +37,8 @@ class ProductRequestTest {
         int price = 3000;
         int deliveryFee = 1000;
 
-        ProductRequest.Create productCreateRequest = ProductRequest.Create.of(productName, productDescription, price, deliveryFee);
-        Set<ConstraintViolation<ProductRequest.Create>> violations = validatorFromFactory.validate(productCreateRequest);
+        ProductRequest productRequest = ProductRequest.of(productName, productDescription, price, deliveryFee);
+        Set<ConstraintViolation<ProductRequest>> violations = validatorFromFactory.validate(productRequest);
 
         // Then
         assertThat(violations).extracting(ConstraintViolation::getMessage).containsExactly("상품명은 필수입니다.");
@@ -53,8 +53,8 @@ class ProductRequestTest {
         int price = -1;
         int deliveryFee = 1000;
 
-        ProductRequest.Create productCreateRequest = ProductRequest.Create.of(productName, productDescription, price, deliveryFee);
-        Set<ConstraintViolation<ProductRequest.Create>> violations = validatorFromFactory.validate(productCreateRequest);
+        ProductRequest productRequest = ProductRequest.of(productName, productDescription, price, deliveryFee);
+        Set<ConstraintViolation<ProductRequest>> violations = validatorFromFactory.validate(productRequest);
 
         // Then
         assertThat(violations).extracting(ConstraintViolation::getMessage).containsExactly("상품 가격은 0원 이상 100,000,000원 이하입니다.");
