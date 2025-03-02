@@ -4,7 +4,7 @@ import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductRepository;
-import com.frankit.shop.global.common.TypeEnum;
+import com.frankit.shop.global.exception.ApiException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,8 +18,9 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-import static com.frankit.shop.global.common.TypeEnum.*;
-import static java.util.Optional.*;
+import static com.frankit.shop.global.common.TypeEnum.Y;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -100,8 +101,10 @@ public class ProductServiceTest {
         when(productRepository.findById(anyLong())).thenReturn(empty());
         ProductRequest productRequest = ProductRequest.of("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
 
-        //then
-        assertThatThrownBy(() -> productService.updateProduct(1L, productRequest)).hasMessageContaining("해당 상품이 존재하지 않습니다.");
+        //when & then
+        assertThatThrownBy(() -> productService.updateProduct(1L, productRequest))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining("요청한 요소를 찾을 수 없습니다.");
         verify(productRepository, times(1)).findById(anyLong());
     }
 
@@ -125,14 +128,12 @@ public class ProductServiceTest {
     @Test
     void deleteNotExistProduct() {
         //given
-        Long productId = 1L;
-
         when(productRepository.findById(anyLong())).thenReturn(empty());
 
-        //when
-        assertThatThrownBy(() -> productService.deleteProduct(productId)).hasMessageContaining("해당 상품이 존재하지 않습니다.");
-
-        //then
+        //when & then
+        assertThatThrownBy(() -> productService.deleteProduct(1L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining("요청한 요소를 찾을 수 없습니다.");
         verify(productRepository, times(1)).findById(anyLong());
     }
 

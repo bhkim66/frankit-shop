@@ -4,11 +4,14 @@ import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductRepository;
+import com.frankit.shop.global.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.frankit.shop.global.exception.ExceptionEnum.NOT_FOUND_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +30,15 @@ public class ProductService {
 
     @Transactional
     public Product updateProduct(Long productId, ProductRequest productRequest) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        return product.update(productRequest);
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR))
+                .update(productRequest);
     }
 
     @Transactional
     public Product deleteProduct(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        return product.delete();
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR))
+                .delete();
     }
 }
