@@ -11,7 +11,6 @@ import static com.frankit.shop.global.common.TypeEnum.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Product extends BaseEntity {
 
     @Id
