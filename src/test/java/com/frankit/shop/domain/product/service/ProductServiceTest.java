@@ -95,15 +95,13 @@ public class ProductServiceTest {
 
     @DisplayName("하나의 상품을 수정하려 할 때 찾는 상품이 없으면 예외가 발생한다")
     @Test
-    void updateNotExistProduct() {
+    void updateProductNotFound() {
         //given
         when(productRepository.findById(anyLong())).thenReturn(empty());
-
-        //when
         ProductRequest productRequest = ProductRequest.of("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
-        assertThatThrownBy(() -> productService.updateProduct(1L, productRequest)).hasMessageContaining("해당 상품이 존재하지 않습니다.");
 
         //then
+        assertThatThrownBy(() -> productService.updateProduct(1L, productRequest)).hasMessageContaining("해당 상품이 존재하지 않습니다.");
         verify(productRepository, times(1)).findById(anyLong());
     }
 

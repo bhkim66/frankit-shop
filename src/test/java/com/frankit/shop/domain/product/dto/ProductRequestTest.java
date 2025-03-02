@@ -28,7 +28,7 @@ class ProductRequestTest {
         validatorFactory.close();
     }
 
-    @DisplayName("상품 이름이 빈값이여서 오류가 발생한다")
+    @DisplayName("상품 이름이 빈값이여서 예외가 발생한다")
     @Test
     void validateProductNameEmpty() {
         //given
@@ -40,13 +40,13 @@ class ProductRequestTest {
         ProductRequest productRequest = ProductRequest.of(productName, productDescription, price, deliveryFee);
         Set<ConstraintViolation<ProductRequest>> violations = validatorFromFactory.validate(productRequest);
 
-        // Then
+        // when & Then
         assertThat(violations).extracting(ConstraintViolation::getMessage).containsExactly("상품명은 필수입니다.");
     }
 
-    @DisplayName("상품 가격이 0원 이하일 때 오류가 발생한다")
+    @DisplayName("상품 가격이 0이상 100,000,000원 이하가 아니라면 예외가 발생한다")
     @Test
-    void validateProductPriceLess0() {
+    void validateProductPrice() {
         //given
         String productName = "신상품";
         String productDescription = "상품설명입니다";
@@ -56,7 +56,7 @@ class ProductRequestTest {
         ProductRequest productRequest = ProductRequest.of(productName, productDescription, price, deliveryFee);
         Set<ConstraintViolation<ProductRequest>> violations = validatorFromFactory.validate(productRequest);
 
-        // Then
+        // when & Then
         assertThat(violations).extracting(ConstraintViolation::getMessage).containsExactly("상품 가격은 0원 이상 100,000,000원 이하입니다.");
     }
 
