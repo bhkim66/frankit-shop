@@ -1,5 +1,7 @@
 package com.frankit.shop.domain.productoption.service;
 
+import com.frankit.shop.domain.product.entity.Product;
+import com.frankit.shop.domain.product.repository.ProductRepository;
 import com.frankit.shop.domain.productoption.dto.ProductOptionRequest;
 import com.frankit.shop.domain.productoption.dto.ProductOptionResponse;
 import com.frankit.shop.domain.productoption.entity.ProductOption;
@@ -18,6 +20,7 @@ import static com.frankit.shop.global.exception.ExceptionEnum.*;
 @Transactional(readOnly = true)
 public class ProductOptionService {
     private final ProductOptionRepository productOptionRepository;
+    private final ProductRepository productRepository;
 
     public List<ProductOptionResponse> findProductOptions(Long productId) {
         return productOptionRepository.findProductOptions(productId)
@@ -36,9 +39,11 @@ public class ProductOptionService {
         if (!existedProductOptions.isEmpty() && existedProductOptions.getFirst().getType() != productOptionRequests.getFirst().getType()) {
             throw new ApiException(OPTION_TYPE_IS_NOT_EQUALS);
         }
+        Product product = productRepository.getReferenceById(productId);
+
         return productOptionRepository.saveAll(productOptionRequests
-                        .stream().map(ProductOptionRequest::toEntity).toList())
-                .stream().map(ProductOptionResponse::of).toList();
+                    .stream().map(request -> request.toEntity(product)).toList())
+                    .stream().map(ProductOptionResponse::of).toList();
     }
 
     @Transactional
@@ -49,6 +54,7 @@ public class ProductOptionService {
 
     }
 
+    @Transactional
     public ProductOption deleteProductOption(Long productOptionId) {
         return productOptionRepository.findProductOption(productOptionId)
                 .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR))

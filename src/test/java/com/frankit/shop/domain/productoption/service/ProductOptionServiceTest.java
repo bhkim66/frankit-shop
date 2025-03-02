@@ -1,6 +1,7 @@
 package com.frankit.shop.domain.productoption.service;
 
 import com.frankit.shop.domain.product.entity.Product;
+import com.frankit.shop.domain.product.repository.ProductRepository;
 import com.frankit.shop.domain.productoption.common.OptionType;
 import com.frankit.shop.domain.productoption.dto.ProductOptionRequest;
 import com.frankit.shop.domain.productoption.dto.ProductOptionResponse;
@@ -31,6 +32,9 @@ public class ProductOptionServiceTest {
     @Mock
     ProductOptionRepository productOptionRepository;
 
+    @Mock
+    ProductRepository productRepository;
+
     @InjectMocks
     ProductOptionService productOptionService;
 
@@ -39,11 +43,13 @@ public class ProductOptionServiceTest {
     @Test
     void addProductOptionsInputType() {
         //given
+        Product product = createProductStep("유니폼", "유니폼입니다", 100_000, 5000);
         ProductOption option1 = createProductOptionStep(null,"스몰", I, 0);
         ProductOption option2 = createProductOptionStep(null, "미디움", I, 500);
         ProductOption option3 = createProductOptionStep(null, "라지", I, 1000);
 
         when(productOptionRepository.saveAll(anyList())).thenReturn(List.of(option1, option2, option3));
+        when(productRepository.getReferenceById(anyLong())).thenReturn(product);
 
         List<ProductOptionRequest> productOptionRequests = List.of(
                 ProductOptionRequest.of("스몰", I, 0),
@@ -63,17 +69,20 @@ public class ProductOptionServiceTest {
                         tuple("라지", I, 1000)
                 );
         verify(productOptionRepository, times(1)).saveAll(anyList());
+        verify(productRepository, times(1)).getReferenceById(anyLong());
     }
 
     @DisplayName("3개 이하의 선택 타입 상품 옵션을 등록할 수 있다")
     @Test
     void addProductOptionsSelectType() {
         //given
+        Product product = createProductStep("유니폼", "유니폼입니다", 100_000, 5000);
         ProductOption option1 = createProductOptionStep(null,"S", S, 0);
         ProductOption option2 = createProductOptionStep(null, "M", S, 500);
         ProductOption option3 = createProductOptionStep(null, "L", S, 1000);
 
         when(productOptionRepository.saveAll(anyList())).thenReturn(List.of(option1, option2, option3));
+        when(productRepository.getReferenceById(anyLong())).thenReturn(product);
 
         List<ProductOptionRequest> productOptionRequests = List.of(
                 ProductOptionRequest.of("S", S, 0),
@@ -93,6 +102,7 @@ public class ProductOptionServiceTest {
                         tuple("L", S, 1000)
                 );
         verify(productOptionRepository, times(1)).saveAll(anyList());
+        verify(productRepository, times(1)).getReferenceById(anyLong());
     }
 
     @DisplayName("상품의 상품 옵션 갯수가 3개를 넘으면 예외가 발생한다")
@@ -219,6 +229,10 @@ public class ProductOptionServiceTest {
                 .isInstanceOf(ApiException.class)
                 .hasMessage("요청한 요소를 찾을 수 없습니다.");
         verify(productOptionRepository, times(1)).findProductOption(anyLong());
+    }
+
+    private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
+        return Product.create(productName, productDescription, price, deliveryFee);
     }
 
     private static ProductOption createProductOptionStep(Product product, String optionName, OptionType optionType, int price) {

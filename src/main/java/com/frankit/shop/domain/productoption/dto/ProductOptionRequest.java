@@ -1,5 +1,6 @@
 package com.frankit.shop.domain.productoption.dto;
 
+import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.productoption.common.OptionType;
 import com.frankit.shop.domain.productoption.entity.ProductOption;
 import jakarta.validation.constraints.NotBlank;
@@ -32,10 +33,11 @@ public class ProductOptionRequest {
                 .build();
     }
 
-    public ProductOption toEntity() {
+    public ProductOption toEntity(Product product) {
         return ProductOption.builder()
                 .name(name)
                 .type(type)
+                .product(product)
                 .extraPrice(extraPrice)
                 .build();
     }
