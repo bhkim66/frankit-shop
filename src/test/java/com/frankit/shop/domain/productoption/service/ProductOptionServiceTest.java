@@ -186,6 +186,21 @@ public class ProductOptionServiceTest {
         assertThat(result).extracting("name", "type", "extraPrice")
                 .containsExactly("미디움", I, 500);
 
+        verify(productOptionRepository, times(2)).findProductOption(anyLong());
+    }
+
+    @DisplayName("옵션을 수정할 때 기존 타입과 다르면 예외가 발생한다")
+    @Test
+    void updateProductOptionNotEqualsType() {
+        //given
+        ProductOption option = createProductOptionStep(null,"스몰", I, 0);
+        when(productOptionRepository.findProductOption(anyLong())).thenReturn(of(option));
+
+        //when & then
+        assertThatThrownBy(() -> productOptionService.updateProductOption(1L, ProductOptionRequest.of("S", S, 500)))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining("기존 옵션 타입과 다른 옵션 타입을 등록할 수 없습니다.");
+
         verify(productOptionRepository, times(1)).findProductOption(anyLong());
     }
 
