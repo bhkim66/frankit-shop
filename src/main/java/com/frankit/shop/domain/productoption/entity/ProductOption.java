@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.frankit.shop.global.common.TypeEnum.N;
 import static com.frankit.shop.global.common.TypeEnum.Y;
 
 @Entity
@@ -40,6 +41,7 @@ public class ProductOption {
         this.name = name;
         this.type = type;
         this.extraPrice = extraPrice;
+        this.delYn = N;
     }
 
     public static ProductOption create(Product product, String name, OptionType type, int price) {

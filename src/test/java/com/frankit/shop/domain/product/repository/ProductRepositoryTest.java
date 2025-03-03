@@ -34,12 +34,10 @@ public class ProductRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        //given
         Product product1 = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
         Product product2 = createProductStep("휴대폰", "휴대폰입니다", 1_500_000, 5000);
         Product product3 = createProductStep("스피커", "스피커입니다", 500_000, 3000);
 
-        //when
         productRepository.saveAll(List.of(product1, product2, product3));
     }
 
