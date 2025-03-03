@@ -2,6 +2,7 @@ package com.frankit.shop.domain.user.entity;
 
 import com.frankit.shop.domain.auth.common.RoleEnum;
 import com.frankit.shop.global.common.TypeEnum;
+import com.frankit.shop.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,8 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "users")
 @Entity
-public class User {
-
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

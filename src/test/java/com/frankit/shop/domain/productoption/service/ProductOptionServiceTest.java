@@ -120,8 +120,11 @@ public class ProductOptionServiceTest {
         );
 
         //when & then
-        assertThatThrownBy(() -> productOptionService.addProductOptions(1L, productOptionRequests))                .isInstanceOf(ApiException.class)
-                .hasMessage("3개 이하의 상품 옵션만 등록할 수 있습니다.");
+        assertThatThrownBy(() -> productOptionService.addProductOptions(1L, productOptionRequests))
+                .isInstanceOf(ApiException.class)
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactlyInAnyOrder("OPT_400_01", "3개 이하의 상품 옵션만 등록할 수 있습니다.");
 
         verify(productOptionRepository, times(1)).findProductOptions(anyLong());
         verify(productOptionRepository, never()).saveAll(anyList());
@@ -142,7 +145,9 @@ public class ProductOptionServiceTest {
         //when & then
         assertThatThrownBy(() -> productOptionService.addProductOptions(1L, productOptionRequests))
                 .isInstanceOf(ApiException.class)
-                .hasMessage("기존 옵션 타입과 다른 옵션 타입을 등록할 수 없습니다.");
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactlyInAnyOrder("OPT_400_02", "기존 옵션 타입과 다른 옵션 타입을 등록할 수 없습니다.");
 
         verify(productOptionRepository, times(1)).findProductOptions(anyLong());
         verify(productOptionRepository, never()).saveAll(anyList());
@@ -199,7 +204,9 @@ public class ProductOptionServiceTest {
         //when & then
         assertThatThrownBy(() -> productOptionService.updateProductOption(1L, ProductOptionRequest.of("S", S, 500)))
                 .isInstanceOf(ApiException.class)
-                .hasMessageContaining("기존 옵션 타입과 다른 옵션 타입을 등록할 수 없습니다.");
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactlyInAnyOrder("OPT_400_02", "기존 옵션 타입과 다른 옵션 타입을 등록할 수 없습니다.");
 
         verify(productOptionRepository, times(1)).findProductOption(anyLong());
     }
@@ -213,7 +220,9 @@ public class ProductOptionServiceTest {
         //when & then
         assertThatThrownBy(() -> productOptionService.updateProductOption(1L, ProductOptionRequest.of("미디움", I, 500)))
                 .isInstanceOf(ApiException.class)
-                .hasMessage("요청한 요소를 찾을 수 없습니다.");
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactlyInAnyOrder("GLO_404_01", "요청한 요소를 찾을 수 없습니다.");
         verify(productOptionRepository, times(1)).findProductOption(anyLong());
     }
 
@@ -242,7 +251,9 @@ public class ProductOptionServiceTest {
         //when & then
         assertThatThrownBy(() -> productOptionService.deleteProductOption(1L))
                 .isInstanceOf(ApiException.class)
-                .hasMessage("요청한 요소를 찾을 수 없습니다.");
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactlyInAnyOrder("GLO_404_01", "요청한 요소를 찾을 수 없습니다.");
         verify(productOptionRepository, times(1)).findProductOption(anyLong());
     }
 

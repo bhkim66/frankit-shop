@@ -104,7 +104,9 @@ public class ProductServiceTest {
         //when & then
         assertThatThrownBy(() -> productService.updateProduct(1L, productRequest))
                 .isInstanceOf(ApiException.class)
-                .hasMessageContaining("요청한 요소를 찾을 수 없습니다.");
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactlyInAnyOrder("GLO_404_01", "요청한 요소를 찾을 수 없습니다.");
         verify(productRepository, times(1)).findById(anyLong());
     }
 
@@ -133,7 +135,9 @@ public class ProductServiceTest {
         //when & then
         assertThatThrownBy(() -> productService.deleteProduct(1L))
                 .isInstanceOf(ApiException.class)
-                .hasMessageContaining("요청한 요소를 찾을 수 없습니다.");
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactlyInAnyOrder("GLO_404_01", "요청한 요소를 찾을 수 없습니다.");
         verify(productRepository, times(1)).findById(anyLong());
     }
 
