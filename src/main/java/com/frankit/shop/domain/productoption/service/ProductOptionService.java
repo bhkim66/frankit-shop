@@ -3,6 +3,7 @@ package com.frankit.shop.domain.productoption.service;
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductRepository;
 import com.frankit.shop.domain.productoption.common.OptionType;
+import com.frankit.shop.domain.productoption.common.SelectTypeOption;
 import com.frankit.shop.domain.productoption.dto.ProductOptionRequest;
 import com.frankit.shop.domain.productoption.dto.ProductOptionResponse;
 import com.frankit.shop.domain.productoption.entity.ProductOption;
@@ -25,6 +26,10 @@ import static com.frankit.shop.global.exception.ExceptionEnum.*;
 public class ProductOptionService {
     private final ProductOptionRepository productOptionRepository;
     private final ProductRepository productRepository;
+
+    public List<SelectTypeOption> selectTypeOptionList() {
+        return List.of(SelectTypeOption.values());
+    }
 
     public List<ProductOptionResponse> findProductOptions(Long productId) {
         return productOptionRepository.findProductOptions(productId)
@@ -66,7 +71,6 @@ public class ProductOptionService {
                 .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR))
                 .delete();
     }
-
 
     /**
      * 상품 옵션 타입은 기존 옵션 타입과 동일한지 체크

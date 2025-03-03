@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum SelectOptions {
+public enum SelectTypeOption {
     S("small"),
     M("medium"),
     L("large"),
