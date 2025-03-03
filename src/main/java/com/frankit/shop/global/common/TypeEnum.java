@@ -7,7 +7,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TypeEnum {
     Y("true"),
-    N("false");
+    N("false"),
+
+    M("male"),
+    F("female")
+
+    ;
 
     private final String value;
 }

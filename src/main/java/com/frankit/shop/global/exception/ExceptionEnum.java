@@ -23,6 +23,11 @@ public enum ExceptionEnum {
     NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "GLO_404_01", "요청한 요소를 찾을 수 없습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GLO_500_01", "예기치 못한 오류가 발생 했습니다."),
     IO_ARGUMENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GLO_500_02", "잘못된 값 입니다."),
+
+    /** 인증되지 않은 멤버 접근 */
+    UNAUTHORIZED_MEMBER(HttpStatus.UNAUTHORIZED, "MEM_401_01", "인증되지 않은 멤버 접근입니다."),
+    /** 토큰이 유효하지 않을 때 or 로그아웃 된 토큰으로 인증 요청할 때 */
+    INVALID_TOKEN_VALUE_ERROR(HttpStatus.UNAUTHORIZED, "MEM_401_02", "유효하지 않은 토큰 입니다."),
     ;
 
     private final HttpStatus status;
