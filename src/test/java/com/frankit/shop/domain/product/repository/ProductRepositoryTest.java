@@ -24,13 +24,13 @@ import static org.assertj.core.api.Assertions.tuple;
 @SpringBootTest
 public class ProductRepositoryTest {
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    DatabaseCleanUp databaseCleanUp;
+    private DatabaseCleanUp databaseCleanUp;
 
     @Autowired
-    EntityManager em;
+    private EntityManager em;
 
     @BeforeEach
     void setUp() {
@@ -40,8 +40,6 @@ public class ProductRepositoryTest {
 
         productRepository.saveAll(List.of(product1, product2, product3));
     }
-
-
 
     @AfterEach
     void tearDown() {
@@ -100,7 +98,9 @@ public class ProductRepositoryTest {
         Product result = productRepository.findById(savedProduct.getId()).orElse(null);
 
         //then
-        assertThat(result.getName()).isEqualTo("장난감");
+        assertThat(result)
+                .extracting("name", "description", "price")
+                .containsExactly("장난감", "장난감입니다", 100_000);
     }
 
     @DisplayName("기존 상품을 수정한다")
@@ -118,9 +118,8 @@ public class ProductRepositoryTest {
         Product result = productRepository.findById(productId).orElse(null);
 
         //then
-        assertThat(result.getName()).isEqualTo("컴퓨터 ver2.0");
-        assertThat(result.getDescription()).isEqualTo("다음 모델 컴퓨터입니다");
-        assertThat(result.getPrice()).isEqualTo(2_000_000);
+        assertThat(result).extracting("name", "description", "price")
+                .containsExactlyInAnyOrder("컴퓨터 ver2.0", "다음 모델 컴퓨터입니다", 2_000_000);
     }
 
     private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {

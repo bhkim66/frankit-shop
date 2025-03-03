@@ -46,7 +46,7 @@ public class ProductOptionService {
         }
         // 상품 옵션 타입은 기존 옵션 타입과 동일한지 체크
         if (!existedProductOptions.isEmpty()) {
-            productOptionRequests.forEach(optionRequest -> isOptionTypeEquals(existedProductOptions.getFirst().getType(), optionRequest.getType()));
+            productOptionRequests.forEach(optionRequest -> OptionType.compareTo(existedProductOptions.getFirst().getType(), optionRequest.getType()));
         }
         Product product = productRepository.getReferenceById(productId);
         return productOptionRepository.saveAll(productOptionRequests
@@ -58,7 +58,7 @@ public class ProductOptionService {
     public ProductOption updateProductOption(Long productOptionId, ProductOptionRequest productOptionRequest) {
         ProductOption productOption = productOptionRepository.findProductOption(productOptionId).orElseThrow(() -> new ApiException(NOT_FOUND_ERROR));
         // 상품 옵션 타입은 기존 옵션 타입과 동일한지 체크
-        isOptionTypeEquals(productOption.getType(), productOptionRequest.getType());
+        OptionType.compareTo(productOption.getType(), productOptionRequest.getType());
 
         return productOptionRepository.findProductOption(productOptionId)
                 .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR))
@@ -70,14 +70,5 @@ public class ProductOptionService {
         return productOptionRepository.findProductOption(productOptionId)
                 .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR))
                 .delete();
-    }
-
-    /**
-     * 상품 옵션 타입은 기존 옵션 타입과 동일한지 체크
-     */
-    private void isOptionTypeEquals(OptionType existType, OptionType addType) {
-        if (!existType.equals(addType)) {
-            throw new ApiException(OPTION_TYPE_IS_NOT_EQUALS);
-        }
     }
 }

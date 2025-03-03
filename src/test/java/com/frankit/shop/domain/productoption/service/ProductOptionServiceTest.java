@@ -30,13 +30,13 @@ import static org.mockito.Mockito.*;
 public class ProductOptionServiceTest {
 
     @Mock
-    ProductOptionRepository productOptionRepository;
+    private ProductOptionRepository productOptionRepository;
 
     @Mock
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @InjectMocks
-    ProductOptionService productOptionService;
+    private ProductOptionService productOptionService;
 
 
     @DisplayName("3개 이하의 입력 타입 상품 옵션을 등록할 수 있다")
