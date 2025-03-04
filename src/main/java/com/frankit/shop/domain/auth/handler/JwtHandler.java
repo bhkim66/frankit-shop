@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Component
 public class JwtHandler {
-    private static final String BEARER_TYPE = "Bearer";
     private final Key key;
 
     public JwtHandler() {
@@ -27,7 +26,6 @@ public class JwtHandler {
 
         return Jwts.builder()
                 .setIssuedAt(now) // 토큰 발급 시간
-                .setIssuer("auth.bhkim.com") // 토큰 발급자
                 .setClaims(privateClaims)
                 .setExpiration(expireDate) // 만료 시간
                 .signWith(key) // 사용 암호 알고리즘

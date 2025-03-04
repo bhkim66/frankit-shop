@@ -14,6 +14,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,6 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.frankit.shop.domain.auth.common.ConstDef.HEADER_KEY_AUTHORIZATION;
+import static com.frankit.shop.domain.auth.common.RoleEnum.DEFAULT;
 import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
 
 @Slf4j
@@ -39,24 +42,24 @@ public class JwtTokenProvider {
     @Getter
     public static class PrivateClaims {
         private final String email;
-        private final Set<GrantedAuthority> role;
+        private final Set<GrantedAuthority> authority;
 
         @Builder
-        private PrivateClaims(String email, Set<GrantedAuthority> role) {
+        private PrivateClaims(String email, Set<GrantedAuthority> authority) {
             this.email = email;
-            this.role = role;
+            this.authority = authority;
         }
 
-        public static PrivateClaims of(String email, Set<GrantedAuthority> role) {
+        public static PrivateClaims of(String email, Set<GrantedAuthority> authority) {
             return PrivateClaims.builder()
                     .email(email)
-                    .role(role)
+                    .authority(authority)
                     .build();
         }
     }
 
     public String generateToken(PrivateClaims privateClaims, Long expireTime) {
-        return jwtHandler.createJwt(Map.of(USER_EMAIL, privateClaims.getEmail(), USER_ROLE, privateClaims.getRole()), expireTime);
+        return jwtHandler.createJwt(Map.of(USER_EMAIL, privateClaims.getEmail(), USER_ROLE, privateClaims.getAuthority()), expireTime);
     }
 
     //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
@@ -81,7 +84,7 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException e) {
             log.error("[validateTokenException] JWT claims string is empty.");
         }
-        throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
+        return null;
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
@@ -92,19 +95,17 @@ public class JwtTokenProvider {
         Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" +
                 claims.get(USER_ROLE)));
 
-        User user = User.of((String) claims.get(USER_EMAIL), RoleEnum.valueOf((String) claims.get(USER_ROLE)));
-
         // UserDetails 객체를 만들어서 Authentication 리턴
-        CustomUserDetail principal = CustomUserDetail.of(user);
+        CustomUserDetail principal = CustomUserDetail.of(User.of((String) claims.get(USER_EMAIL), DEFAULT));
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    public String getRefreshTokenFromHeader() {
-        return validateToken(((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
-                .getRequest().getHeader(HEADER_KEY_AUTHORIZATION));
-    }
+//    public String getRefreshTokenFromHeader() {
+//        return validateToken(((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
+//                .getRequest().getHeader(HEADER_KEY_AUTHORIZATION));
+//    }
 
     private PrivateClaims convert(Claims claims) {
-        return PrivateClaims.of(claims.get(USER_EMAIL, String.class), Collections.singleton((GrantedAuthority) claims.get(USER_ROLE)));
+        return PrivateClaims.of(claims.get(USER_EMAIL, String.class),  Collections.singleton((GrantedAuthority) claims.get(USER_ROLE)));
     }
 }
