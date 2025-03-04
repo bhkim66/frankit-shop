@@ -35,9 +35,6 @@ class AuthServiceTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
     @InjectMocks
@@ -88,4 +85,17 @@ class AuthServiceTest {
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtTokenProvider, never()).generateToken(any(JwtTokenProvider.PrivateClaims.class), anyLong());
     }
+
+    @DisplayName("정상적인 refreshToken 값이면 새로운 토큰을 재발급 받을 수 있다")
+    @Test
+    void validTokenCanReissueToken() {
+        //given
+        String refreshToken = "ey5adbvs.agewsfdsvs.3dsvs";
+        when(jwtTokenProvider.generateToken(any(JwtTokenProvider.PrivateClaims.class), anyLong())).thenReturn(refreshToken);
+
+        //when
+
+        //then
+    }
+
 }

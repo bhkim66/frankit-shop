@@ -31,6 +31,10 @@ public class CustomUserDetail implements UserDetails {
         return Collections.singleton(new SimpleGrantedAuthority(role.getValue()));
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public Set<GrantedAuthority> getAuthorities() {
         return authorities;
@@ -38,13 +42,11 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String getPassword() {
         throw new UnsupportedOperationException();
     }
-
-
 }

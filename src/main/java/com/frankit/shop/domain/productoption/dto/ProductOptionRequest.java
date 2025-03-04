@@ -7,16 +7,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 @Getter
+@NoArgsConstructor
 public class ProductOptionRequest {
     @NotBlank(message = "옵션명은 필수입니다.")
-    private final String name;
+    private String name;
     @NotNull(message = "옵션 타입은 필수입니다.")
-    private final OptionType type;
+    private OptionType type;
     @Range(min = 0, max = 100_000_000, message = "옵션 가격은 0원 이상 100,000,000원 이하입니다.")
-    private final int extraPrice;
+    private int extraPrice;
 
     @Builder
     private ProductOptionRequest(String name, OptionType type, int extraPrice) {

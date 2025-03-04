@@ -4,18 +4,20 @@ import com.frankit.shop.domain.product.entity.Product;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 @Getter
+@NoArgsConstructor
 public class ProductRequest {
     @NotBlank(message = "상품명은 필수입니다.")
-    private final String name;
+    private String name;
     @NotBlank(message = "상품 설명은 필수입니다.")
-    private final String description;
+    private String description;
     @Range(min = 0, max = 100_000_000, message = "상품 가격은 0원 이상 100,000,000원 이하입니다.")
-    private final int price;
+    private int price;
     @Range(min = 0, max = 100_000_000, message = "배송비는 0원 이상 100,000,000원 이하입니다.")
-    private final int deliveryFee;
+    private int deliveryFee;
 
     @Builder
     private ProductRequest(String name, String description, int price, int deliveryFee) {

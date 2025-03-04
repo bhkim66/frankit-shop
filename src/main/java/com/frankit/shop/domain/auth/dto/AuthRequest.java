@@ -2,14 +2,17 @@ package com.frankit.shop.domain.auth.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 public class AuthRequest {
 
     @Getter
+    @NoArgsConstructor
     public static class SignIn {
-        private final String email;
-        private final String password;
+        private String email;
+        private String password;
 
         @Builder
         private SignIn(String email, String password) {
@@ -27,5 +30,11 @@ public class AuthRequest {
         public UsernamePasswordAuthenticationToken toAuthentication() {
             return new UsernamePasswordAuthenticationToken(email, password);
         }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class RefreshToken {
+        private String refreshToken;
     }
 }

@@ -1,8 +1,10 @@
 package com.frankit.shop.global.exception;
 
 import com.frankit.shop.global.common.ApiResponseResult;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.NestedExceptionUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,9 +17,8 @@ import java.util.Optional;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionAdvice {
-
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponseResult<?>> handleException(Exception e) {
+    public ResponseEntity<ApiResponseResult<?>> handleException(Exception e, HttpServletRequest request) {
         log.error("[Exception] cause ={}, message ={}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
         ExceptionEnum error = ExceptionEnum.INTERNAL_SERVER_ERROR;
         return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error));
@@ -56,4 +57,10 @@ public class GlobalExceptionAdvice {
                 .orElse("");
         return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error.getErrorCode(), message));
     }
+
+//    private boolean checkingApiDocs(HttpServletRequest request) {
+//        if (request.getRequestURI().contains("/v3/api-docs")) {
+//            return ResponseEntity.status(HttpStatus.OK).body("");
+//        }
+//    }
 }

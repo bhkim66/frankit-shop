@@ -1,6 +1,7 @@
 package com.frankit.shop.domain.auth.api.service;
 
 import com.frankit.shop.domain.auth.common.RoleEnum;
+import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.user.entity.User;
 import com.frankit.shop.domain.user.repository.UserRepository;
 import com.frankit.shop.global.exception.ApiException;
@@ -38,10 +39,10 @@ class CustomUserDetailsServiceTest {
         when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
         //when
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername("testKim123");
+        CustomUserDetail userDetails = (CustomUserDetail) customUserDetailsService.loadUserByUsername("testKim123");
 
         //then
-        assertThat(userDetails.getUsername()).isEqualTo(user.getEmail());
+        assertThat(userDetails.getEmail()).isEqualTo(user.getEmail());
         assertThat(userDetails.getAuthorities())
                 .hasSize(1)
                 .extracting(GrantedAuthority::getAuthority)
