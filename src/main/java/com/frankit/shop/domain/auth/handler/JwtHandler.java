@@ -14,7 +14,6 @@ import java.util.Optional;
 @Component
 public class JwtHandler {
     private final Key key;
-
     public JwtHandler() {
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }

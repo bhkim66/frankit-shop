@@ -32,15 +32,17 @@ class JwtTokenProviderTest {
         jwtTokenProvider = new JwtTokenProvider(jwtHandler);
     }
 
-    @DisplayName("PrivateClaims 값으로 정상적인 토큰을 생성할 수 있다")
+    @DisplayName("정상적인 토큰을 생성할 수 있다")
     @Test
     void generateToken() throws BadRequestException {
         //given
         String accessToken = createToken("testerKim123", USER, 10 * 1000L);
         //when
-        String validateToken = jwtTokenProvider.validateToken(accessToken);
+        Authentication authentication = jwtTokenProvider.validateToken(accessToken);
         //then
-        assertThat(validateToken).isNotNull();
+        assertThat(authentication.getPrincipal())
+                .extracting("email")
+                .isEqualTo("testerKim123");
     }
 
     @DisplayName("유효하지 않는 토큰은 예외가 발생한다")
@@ -50,10 +52,10 @@ class JwtTokenProviderTest {
         String accessToken = createToken("testerKim123", USER, 30 * 1000L);
 
         //when
-        String result = jwtTokenProvider.validateToken(accessToken + "fail");
+        Authentication authentication = jwtTokenProvider.validateToken(accessToken + "fail");
 
         //then
-        assertThat(result).isNull();
+        assertThat(authentication).isNull();
     }
 
     @DisplayName("유효기간이 지난 토큰은 예외가 발생한다")
@@ -62,11 +64,12 @@ class JwtTokenProviderTest {
         //given
         String accessToken = createToken("testerKim123", USER,  1000L);
         Thread.sleep(2000);
+
         //when
-        String result = jwtTokenProvider.validateToken(accessToken);
+        Authentication authentication = jwtTokenProvider.validateToken(accessToken);
 
         //then
-        assertThat(result).isNull();
+        assertThat(authentication).isNull();
     }
 
     @DisplayName("토큰을 복호화하여 토큰 정보를 가져올 수 있다")

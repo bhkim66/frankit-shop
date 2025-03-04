@@ -71,10 +71,10 @@ public class JwtTokenProvider {
     }
 
     // 토큰 정보를 검증하는 메서드
-    public String validateToken(String token) {
+    public Authentication validateToken(String token) {
         try {
             Optional<Claims> claims = jwtHandler.parseClaims(token);
-            return token;
+            return getAuthentication(token);
         } catch (SecurityException | MalformedJwtException e) {
             log.error("[validateTokenException] Invalid JWT Token");
         } catch (ExpiredJwtException e) {
