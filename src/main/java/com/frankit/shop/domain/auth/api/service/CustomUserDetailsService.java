@@ -1,4 +1,4 @@
-package com.frankit.shop.domain.auth.service;
+package com.frankit.shop.domain.auth.api.service;
 
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.user.entity.User;
@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.frankit.shop.global.exception.ExceptionEnum.USERNAME_NOT_FOUND_EXCEPTION;
+import static com.frankit.shop.global.exception.ExceptionEnum.USERNAME_NOT_FOUND_ERROR;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,11 +24,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findById(email)
                 .map(this::createUserDetails)
-                .orElseThrow(() -> new ApiException(USERNAME_NOT_FOUND_EXCEPTION));
+                .orElseThrow(() -> new ApiException(USERNAME_NOT_FOUND_ERROR));
     }
 
     // 해당하는 User 의 데이터가 존재한다면 UserDetails 객체로 만들어서 리턴
     private CustomUserDetail createUserDetails(User user) {
-       return new CustomUserDetail(user);
+       return CustomUserDetail.of(user);
     }
 }

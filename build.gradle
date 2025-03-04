@@ -52,6 +52,9 @@ dependencies {
 	//Jpa 쿼리 log
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.2'
 
+	//rest-assured
+	testImplementation 'io.rest-assured:rest-assured:5.5.1'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 

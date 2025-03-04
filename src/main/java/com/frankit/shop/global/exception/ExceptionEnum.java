@@ -2,7 +2,6 @@ package com.frankit.shop.global.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -24,11 +23,10 @@ public enum ExceptionEnum {
     IO_ARGUMENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GLO_500_02", "잘못된 값 입니다."),
 
     /** 인증되지 않은 멤버 접근 */
-    UNAUTHORIZED_MEMBER(HttpStatus.UNAUTHORIZED, "MEM_401_01", "인증되지 않은 멤버 접근입니다."),
-
-    USERNAME_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "MEM_404_01", "존재하지 않는 사용자입니다."),
+    UNAUTHORIZED_MEMBER(HttpStatus.UNAUTHORIZED, "AUT_401_01", "인증되지 않은 멤버 접근입니다."),
     /** 토큰이 유효하지 않을 때 or 로그아웃 된 토큰으로 인증 요청할 때 */
-    INVALID_TOKEN_VALUE_ERROR(HttpStatus.UNAUTHORIZED, "MEM_401_02", "유효하지 않은 토큰 입니다."),
+    INVALID_TOKEN_VALUE_ERROR(HttpStatus.UNAUTHORIZED, "AUT_401_02", "유효하지 않은 토큰 입니다."),
+    USERNAME_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "AUT_404_01", "존재하지 않는 사용자입니다."),
     ;
 
     private final HttpStatus status;

@@ -1,4 +1,4 @@
-package com.frankit.shop.domain.productoption.service;
+package com.frankit.shop.domain.productoption.api.service;
 
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductRepository;

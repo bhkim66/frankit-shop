@@ -2,6 +2,7 @@ package com.frankit.shop.domain.productoption.service;
 
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductRepository;
+import com.frankit.shop.domain.productoption.api.service.ProductOptionService;
 import com.frankit.shop.domain.productoption.common.OptionType;
 import com.frankit.shop.domain.productoption.dto.ProductOptionRequest;
 import com.frankit.shop.domain.productoption.dto.ProductOptionResponse;

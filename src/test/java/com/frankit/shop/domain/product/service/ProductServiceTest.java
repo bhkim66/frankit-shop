@@ -1,5 +1,6 @@
 package com.frankit.shop.domain.product.service;
 
+import com.frankit.shop.domain.product.api.service.ProductService;
 import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.domain.product.entity.Product;

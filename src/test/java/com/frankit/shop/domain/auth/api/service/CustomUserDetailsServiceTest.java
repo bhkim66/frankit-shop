@@ -1,7 +1,6 @@
-package com.frankit.shop.domain.auth.service;
+package com.frankit.shop.domain.auth.api.service;
 
 import com.frankit.shop.domain.auth.common.RoleEnum;
-import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.user.entity.User;
 import com.frankit.shop.domain.user.repository.UserRepository;
 import com.frankit.shop.global.exception.ApiException;
@@ -12,9 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
@@ -46,9 +43,9 @@ class CustomUserDetailsServiceTest {
         //then
         assertThat(userDetails.getUsername()).isEqualTo(user.getEmail());
         assertThat(userDetails.getAuthorities())
-                .hasSize(1) // 권한 개수 검증
-                .extracting(GrantedAuthority::getAuthority) // authority 문자열 추출
-                .containsExactly("ROLE_USER"); // 기대값과 비교
+                .hasSize(1)
+                .extracting(GrantedAuthority::getAuthority)
+                .containsExactly("ROLE_USER");
         verify(userRepository, times(1)).findById(anyString());
     }
 
@@ -63,7 +60,7 @@ class CustomUserDetailsServiceTest {
                 .isInstanceOf(ApiException.class)
                 .extracting("e")
                 .extracting("errorCode", "errorMessage")
-                .containsExactlyInAnyOrder("MEM_404_01", "존재하지 않는 사용자입니다.");
+                .containsExactlyInAnyOrder("AUT_404_01", "존재하지 않는 사용자입니다.");
         verify(userRepository, times(1)).findById(anyString());
     }
 }

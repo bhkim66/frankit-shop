@@ -10,7 +10,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SecurityException;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.frankit.shop.domain.auth.common.ConstDef.HEADER_KEY_AUTHORIZATION;
 import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
@@ -32,18 +33,30 @@ import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALU
 @RequiredArgsConstructor
 public class JwtTokenProvider {
     private final JwtHandler jwtHandler;
-    private static final String USER_ID = "userId";
-    private static final String ROLE = "role";
+    private static final String USER_EMAIL = "email";
+    private static final String USER_ROLE = "role";
 
     @Getter
-    @AllArgsConstructor
     public static class PrivateClaims {
-        private String userId;
-        private RoleEnum role;
+        private final String email;
+        private final Set<GrantedAuthority> role;
+
+        @Builder
+        private PrivateClaims(String email, Set<GrantedAuthority> role) {
+            this.email = email;
+            this.role = role;
+        }
+
+        public static PrivateClaims of(String email, Set<GrantedAuthority> role) {
+            return PrivateClaims.builder()
+                    .email(email)
+                    .role(role)
+                    .build();
+        }
     }
 
     public String generateToken(PrivateClaims privateClaims, Long expireTime) {
-        return jwtHandler.createJwt(Map.of(USER_ID, privateClaims.getUserId(), ROLE, privateClaims.getRole()), expireTime);
+        return jwtHandler.createJwt(Map.of(USER_EMAIL, privateClaims.getEmail(), USER_ROLE, privateClaims.getRole()), expireTime);
     }
 
     //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
@@ -77,12 +90,12 @@ public class JwtTokenProvider {
         Claims claims = jwtHandler.parseClaims(token).orElseThrow();
         // 클레임에서 권한 정보 가져오기
         Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" +
-                claims.get(ROLE)));
+                claims.get(USER_ROLE)));
 
-        User user = User.of((String) claims.get(USER_ID), RoleEnum.valueOf((String) claims.get(ROLE)));
+        User user = User.of((String) claims.get(USER_EMAIL), RoleEnum.valueOf((String) claims.get(USER_ROLE)));
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        CustomUserDetail principal = new CustomUserDetail(user);
+        CustomUserDetail principal = CustomUserDetail.of(user);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
@@ -92,18 +105,6 @@ public class JwtTokenProvider {
     }
 
     private PrivateClaims convert(Claims claims) {
-        return new PrivateClaims(claims.get(USER_ID, String.class), RoleEnum.valueOf(claims.get(ROLE, String.class)));
-
-//    public Set<RoleEnum> extractUserRole() {
-//        return getUserDetail().getAuthorities()
-//                .stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .map(RoleEnum::valueOf)
-//                .collect(Collectors.toSet());
-//    }
-//
-//    private CustomUserDetail getUserDetail() {
-//        return (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//    }
+        return PrivateClaims.of(claims.get(USER_EMAIL, String.class), Collections.singleton((GrantedAuthority) claims.get(USER_ROLE)));
     }
 }
