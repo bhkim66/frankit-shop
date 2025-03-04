@@ -22,7 +22,7 @@ import static com.frankit.shop.domain.auth.common.ConstDef.HEADER_KEY_AUTHORIZAT
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtHelper jwtHelper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -31,8 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(extractToken.isPresent()) {
             String token = extractToken.get();
-            jwtTokenProvider.validateToken(token);
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            jwtHelper.validateToken(token);
+            Authentication authentication = jwtHelper.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

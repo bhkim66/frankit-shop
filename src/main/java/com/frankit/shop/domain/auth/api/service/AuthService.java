@@ -1,6 +1,6 @@
 package com.frankit.shop.domain.auth.api.service;
 
-import com.frankit.shop.domain.auth.config.JwtTokenProvider;
+import com.frankit.shop.domain.auth.config.JwtHelper;
 import com.frankit.shop.domain.auth.dto.AuthRequest;
 import com.frankit.shop.domain.auth.dto.AuthResponse;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
@@ -25,7 +25,7 @@ import static com.frankit.shop.global.exception.ExceptionEnum.USERNAME_NOT_FOUND
 @Transactional(readOnly = true)
 public class AuthService{
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtHelper jwtHelper;
     private final AuthFacade authFacade;
 
     public static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;        // accessToken 유효시간
@@ -43,7 +43,7 @@ public class AuthService{
         }
         CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        JwtTokenProvider.PrivateClaims claims = JwtTokenProvider.PrivateClaims.of(user.getEmail(), user.getAuthorities());
+        JwtHelper.PrivateClaims claims = JwtHelper.PrivateClaims.of(user.getEmail(), user.getAuthorities());
         String accessToken = createToken(claims, ACCESS_TOKEN_EXPIRE_TIME);
         String refreshToken = createToken(claims, REFRESH_TOKEN_EXPIRE_TIME);
         return AuthResponse.Token.of(accessToken, refreshToken);
@@ -58,14 +58,14 @@ public class AuthService{
         String userId = authFacade.getCurrentUserEmail();
         String storedRefreshToken = "";
 
-        JwtTokenProvider.PrivateClaims privateClaims = jwtTokenProvider.parseRefreshToken(refreshToken, storedRefreshToken);
+        JwtHelper.PrivateClaims privateClaims = jwtHelper.parseRefreshToken(refreshToken, storedRefreshToken);
         String newAccessToken = createToken(privateClaims, ACCESS_TOKEN_EXPIRE_TIME);
         String newRefreshToken = createToken(privateClaims, REFRESH_TOKEN_EXPIRE_TIME);
 
         return AuthResponse.Token.of(newAccessToken, newRefreshToken);
     }
 
-    private String createToken(JwtTokenProvider.PrivateClaims privateClaims , Long expireTime) {
-        return jwtTokenProvider.generateToken(privateClaims, expireTime);
+    private String createToken(JwtHelper.PrivateClaims privateClaims , Long expireTime) {
+        return jwtHelper.generateToken(privateClaims, expireTime);
     }
 }

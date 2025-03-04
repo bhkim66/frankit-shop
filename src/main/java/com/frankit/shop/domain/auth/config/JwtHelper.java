@@ -1,6 +1,5 @@
 package com.frankit.shop.domain.auth.config;
 
-import com.frankit.shop.domain.auth.common.RoleEnum;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.auth.handler.JwtHandler;
 import com.frankit.shop.domain.user.entity.User;
@@ -14,27 +13,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.frankit.shop.domain.auth.common.ConstDef.HEADER_KEY_AUTHORIZATION;
 import static com.frankit.shop.domain.auth.common.RoleEnum.DEFAULT;
 import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtTokenProvider {
+public class JwtHelper {
     private final JwtHandler jwtHandler;
     private static final String USER_EMAIL = "email";
     private static final String USER_ROLE = "role";
