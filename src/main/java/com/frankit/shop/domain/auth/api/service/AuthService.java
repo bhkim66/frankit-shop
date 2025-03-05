@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.frankit.shop.domain.auth.facade.AuthFacade.*;
 import static com.frankit.shop.global.exception.ExceptionEnum.USERNAME_NOT_FOUND_ERROR;
 
 
@@ -26,7 +27,6 @@ import static com.frankit.shop.global.exception.ExceptionEnum.USERNAME_NOT_FOUND
 public class AuthService{
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtHelper jwtHelper;
-    private final AuthFacade authFacade;
 
     public static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;        // accessToken 유효시간
     public static final Long REFRESH_TOKEN_EXPIRE_TIME = 12 * 60 * 60 * 1000L;  // refreshToken 유효시간
@@ -55,7 +55,7 @@ public class AuthService{
     }
 
     public AuthResponse.Token reissueToken(String refreshToken) {
-        String userId = authFacade.getCurrentUserEmail();
+        String userId = getCurrentUserEmail();
         String storedRefreshToken = "";
 
         JwtHelper.PrivateClaims privateClaims = jwtHelper.parseRefreshToken(refreshToken, storedRefreshToken);

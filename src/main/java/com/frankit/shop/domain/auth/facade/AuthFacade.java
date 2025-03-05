@@ -11,7 +11,7 @@ import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALU
 
 @Component
 public class AuthFacade {
-    private CustomUserDetail getCurrentUserDetails() {
+    private static CustomUserDetail getCurrentUserDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
@@ -19,7 +19,7 @@ public class AuthFacade {
         return (CustomUserDetail) authentication.getPrincipal();
     }
 
-    public String getCurrentUserEmail() {
+    public static String getCurrentUserEmail() {
         return getCurrentUserDetails().getEmail();
     }
 }
