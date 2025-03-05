@@ -1,6 +1,7 @@
 package com.frankit.shop.domain.auth.config;
 
 import com.frankit.shop.domain.auth.common.RoleEnum;
+import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.domain.auth.handler.JwtHandler;
 import io.jsonwebtoken.security.SignatureException;
 import org.apache.coyote.BadRequestException;
@@ -14,13 +15,13 @@ import static com.frankit.shop.domain.auth.entity.CustomUserDetail.getGrantedAut
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class JwtHelperTest {
-    private JwtHelper jwtHelper;
+class JwtProviderTest {
+    private JwtProvider jwtProvider;
 
     @BeforeEach
     void setUp() {
         JwtHandler jwtHandler = new JwtHandler();
-        jwtHelper = new JwtHelper(jwtHandler);
+        jwtProvider = new JwtProvider(jwtHandler);
     }
 
     @DisplayName("정상적인 토큰을 생성할 수 있다")
@@ -29,7 +30,7 @@ class JwtHelperTest {
         //given
         String accessToken = createToken("testerKim123", USER, 10 * 1000L);
         //when
-        Authentication authentication = jwtHelper.validateToken(accessToken);
+        Authentication authentication = jwtProvider.validateToken(accessToken);
         //then
         assertThat(authentication.getPrincipal())
                 .extracting("email")
@@ -43,7 +44,7 @@ class JwtHelperTest {
         String accessToken = createToken("testerKim123", USER, 30 * 1000L);
 
         //when
-        Authentication authentication = jwtHelper.validateToken(accessToken + "fail");
+        Authentication authentication = jwtProvider.validateToken(accessToken + "fail");
 
         //then
         assertThat(authentication).isNull();
@@ -57,7 +58,7 @@ class JwtHelperTest {
         Thread.sleep(2000);
 
         //when
-        Authentication authentication = jwtHelper.validateToken(accessToken);
+        Authentication authentication = jwtProvider.validateToken(accessToken);
 
         //then
         assertThat(authentication).isNull();
@@ -70,7 +71,7 @@ class JwtHelperTest {
         String accessToken = createToken("testerKim123", USER,  30 * 1000L);
 
         //when
-        Authentication authentication = jwtHelper.getAuthentication(accessToken);
+        Authentication authentication = jwtProvider.getAuthentication(accessToken);
 
         //then
         assertThat(authentication.getPrincipal())
@@ -84,7 +85,7 @@ class JwtHelperTest {
         String accessToken = createToken("testerKim123", USER,  30 * 1000L);
 
         //when & then
-        assertThatThrownBy(() -> jwtHelper.getAuthentication(accessToken + "fail"))
+        assertThatThrownBy(() -> jwtProvider.getAuthentication(accessToken + "fail"))
                 .isInstanceOf(SignatureException.class);
     }
 
@@ -93,7 +94,7 @@ class JwtHelperTest {
     }
 
     private String createToken(String email, RoleEnum role, Long expiredTime) {
-        JwtHelper.PrivateClaims claims = JwtHelper.PrivateClaims.of(email, getGrantedAuthoritySet(role));
-        return jwtHelper.generateToken(claims, expiredTime);
+        PrivateClaims claims = PrivateClaims.of(email, getGrantedAuthoritySet(role));
+        return jwtProvider.generateToken(claims, expiredTime);
     }
 }

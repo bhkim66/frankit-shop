@@ -1,10 +1,10 @@
 package com.frankit.shop.domain.auth.api.service;
 
-import com.frankit.shop.domain.auth.config.JwtHelper;
+import com.frankit.shop.domain.auth.config.JwtProvider;
 import com.frankit.shop.domain.auth.dto.AuthRequest;
 import com.frankit.shop.domain.auth.dto.AuthResponse;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
-import com.frankit.shop.domain.auth.facade.AuthFacade;
+import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.global.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.frankit.shop.domain.auth.facade.AuthFacade.*;
 import static com.frankit.shop.global.exception.ExceptionEnum.USERNAME_NOT_FOUND_ERROR;
 
 
@@ -24,9 +23,9 @@ import static com.frankit.shop.global.exception.ExceptionEnum.USERNAME_NOT_FOUND
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class AuthService{
+public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtHelper jwtHelper;
+    private final JwtProvider jwtProvider;
 
     public static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;        // accessToken 유효시간
     public static final Long REFRESH_TOKEN_EXPIRE_TIME = 12 * 60 * 60 * 1000L;  // refreshToken 유효시간
@@ -43,7 +42,7 @@ public class AuthService{
         }
         CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        JwtHelper.PrivateClaims claims = JwtHelper.PrivateClaims.of(user.getEmail(), user.getAuthorities());
+        PrivateClaims claims = PrivateClaims.of(user.getEmail(), user.getAuthorities());
         String accessToken = createToken(claims, ACCESS_TOKEN_EXPIRE_TIME);
         String refreshToken = createToken(claims, REFRESH_TOKEN_EXPIRE_TIME);
         return AuthResponse.Token.of(accessToken, refreshToken);
@@ -55,17 +54,17 @@ public class AuthService{
     }
 
     public AuthResponse.Token reissueToken(String refreshToken) {
-        String userId = getCurrentUserEmail();
+        String userId = jwtProvider.getCurrentUserEmail();
         String storedRefreshToken = "";
 
-        JwtHelper.PrivateClaims privateClaims = jwtHelper.parseRefreshToken(refreshToken, storedRefreshToken);
+        PrivateClaims privateClaims = jwtProvider.parseRefreshToken(refreshToken, storedRefreshToken);
         String newAccessToken = createToken(privateClaims, ACCESS_TOKEN_EXPIRE_TIME);
         String newRefreshToken = createToken(privateClaims, REFRESH_TOKEN_EXPIRE_TIME);
 
         return AuthResponse.Token.of(newAccessToken, newRefreshToken);
     }
 
-    private String createToken(JwtHelper.PrivateClaims privateClaims , Long expireTime) {
-        return jwtHelper.generateToken(privateClaims, expireTime);
+    private String createToken(PrivateClaims privateClaims , Long expireTime) {
+        return jwtProvider.generateToken(privateClaims, expireTime);
     }
 }

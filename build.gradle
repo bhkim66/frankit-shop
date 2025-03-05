@@ -36,6 +36,9 @@ dependencies {
 
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	//h2
 	runtimeOnly 'com.h2database:h2'
 

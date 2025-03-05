@@ -1,10 +1,11 @@
 package com.frankit.shop.domain.auth.api.service;
 
 import com.frankit.shop.domain.auth.common.RoleEnum;
-import com.frankit.shop.domain.auth.config.JwtHelper;
+import com.frankit.shop.domain.auth.config.JwtProvider;
 import com.frankit.shop.domain.auth.dto.AuthRequest;
 import com.frankit.shop.domain.auth.dto.AuthResponse;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
+import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.domain.user.entity.User;
 import com.frankit.shop.global.exception.ApiException;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ class AuthServiceTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private JwtHelper jwtHelper;
+    private JwtProvider jwtProvider;
 
     @InjectMocks
     private AuthService authService;
@@ -52,7 +53,7 @@ class AuthServiceTest {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
         when(authenticationManagerBuilder.getObject()).thenReturn(authenticationManager);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
-        when(jwtHelper.generateToken(any(JwtHelper.PrivateClaims.class), anyLong())).thenReturn("accessToken");
+        when(jwtProvider.generateToken(any(PrivateClaims.class), anyLong())).thenReturn("accessToken");
 
         //when
         AuthResponse.Token token = authService.signIn(signIn);
@@ -61,7 +62,7 @@ class AuthServiceTest {
         assertThat(token.getAccessToken()).isEqualTo("accessToken");
         verify(authenticationManagerBuilder, times(1)).getObject();
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(jwtHelper, times(2)).generateToken(any(JwtHelper.PrivateClaims.class), anyLong());
+        verify(jwtProvider, times(2)).generateToken(any(PrivateClaims.class), anyLong());
     }
 
     @DisplayName("유저 정보를 없다면 예외가 발생한다")
@@ -82,7 +83,7 @@ class AuthServiceTest {
 
         verify(authenticationManagerBuilder, times(1)).getObject();
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(jwtHelper, never()).generateToken(any(JwtHelper.PrivateClaims.class), anyLong());
+        verify(jwtProvider, never()).generateToken(any(PrivateClaims.class), anyLong());
     }
 
     @DisplayName("정상적인 refreshToken 값이면 새로운 토큰을 재발급 받을 수 있다")
@@ -90,7 +91,7 @@ class AuthServiceTest {
     void validTokenCanReissueToken() {
         //given
         String refreshToken = "ey5adbvs.agewsfdsvs.3dsvs";
-        when(jwtHelper.generateToken(any(JwtHelper.PrivateClaims.class), anyLong())).thenReturn(refreshToken);
+        when(jwtProvider.generateToken(any(PrivateClaims.class), anyLong())).thenReturn(refreshToken);
 
         //when
 

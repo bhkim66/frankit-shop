@@ -29,7 +29,6 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private TypeEnum sex;
 
-    @Column(name = "ROLE")
     private RoleEnum role;
 
     @Builder
