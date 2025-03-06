@@ -1,5 +1,6 @@
 package com.frankit.shop.domain.auth.api.service;
 
+import com.frankit.shop.domain.auth.api.service.token.TokenHandlingService;
 import com.frankit.shop.domain.auth.common.RoleEnum;
 import com.frankit.shop.domain.auth.config.JwtProvider;
 import com.frankit.shop.domain.auth.dto.AuthRequest;
@@ -8,6 +9,7 @@ import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.domain.user.entity.User;
 import com.frankit.shop.global.exception.ApiException;
+import com.frankit.shop.global.redis.entity.Token;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 
+import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,6 +39,9 @@ class AuthServiceTest {
 
     @Mock
     private JwtProvider jwtProvider;
+
+    @Mock
+    private TokenHandlingService<Token> tokenHandlingService;
 
     @InjectMocks
     private AuthService authService;
@@ -90,12 +96,54 @@ class AuthServiceTest {
     @Test
     void validTokenCanReissueToken() {
         //given
-        String refreshToken = "ey5adbvs.agewsfdsvs.3dsvs";
-        when(jwtProvider.generateToken(any(PrivateClaims.class), anyLong())).thenReturn(refreshToken);
+        String refreshToken = "refreshToken123";
+        String userEmail = "testerKim123";
+        Token token = Token.of(userEmail, refreshToken, 10 * 1000L);
+
+        when(jwtProvider.getCurrentUserEmail()).thenReturn(userEmail);
+        when(tokenHandlingService.findById(anyString())).thenReturn(token);
+        when(jwtProvider.parseRefreshToken(anyString(), anyString())).thenReturn(PrivateClaims.of("testerKim123", null));
+        when(jwtProvider.generateToken(any(PrivateClaims.class), anyLong())).thenReturn("newAccessToken", "newRefreshToken");
+        when(tokenHandlingService.save(any(Token.class))).thenReturn(token);
 
         //when
+        AuthResponse.Token result = authService.reissueToken(refreshToken);
 
         //then
+        assertThat(result.getAccessToken()).isEqualTo("newAccessToken");
+        assertThat(result.getRefreshToken()).isEqualTo("newRefreshToken");
+
+        verify(jwtProvider, times(1)).getCurrentUserEmail();
+        verify(tokenHandlingService, times(1)).findById(anyString());
+        verify(jwtProvider, times(1)).parseRefreshToken(anyString(), anyString());
+        verify(jwtProvider, times(2)).generateToken(any(PrivateClaims.class), anyLong());
+        verify(tokenHandlingService, times(1)).save(any(Token.class));
+    }
+
+    @DisplayName("정상적이지 않은 refreshToken 값이 전달되면 새로운 토큰을 재발급 받을 수 없다")
+    @Test
+    void invalidTokenCanNotReissueToken() {
+        //given
+        String refreshToken = "refreshToken123";
+        String userEmail = "testerKim123";
+        Token token = Token.of(userEmail, refreshToken, 10 * 1000L);
+
+        when(jwtProvider.getCurrentUserEmail()).thenReturn(userEmail);
+        when(tokenHandlingService.findById(anyString())).thenReturn(token);
+        when(jwtProvider.parseRefreshToken(anyString(), anyString())).thenThrow(new ApiException(INVALID_TOKEN_VALUE_ERROR));
+
+        //when & then
+        assertThatThrownBy(() -> authService.reissueToken(refreshToken))
+                .isInstanceOf(ApiException.class)
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactly("AUT_401_02", "유효하지 않은 토큰 입니다.");
+
+        verify(jwtProvider, times(1)).getCurrentUserEmail();
+        verify(tokenHandlingService, times(1)).findById(anyString());
+        verify(jwtProvider, times(1)).parseRefreshToken(anyString(), anyString());
+        verify(jwtProvider, never()).generateToken(any(PrivateClaims.class), anyLong());
+        verify(tokenHandlingService, never()).save(any(Token.class));
     }
 
 }

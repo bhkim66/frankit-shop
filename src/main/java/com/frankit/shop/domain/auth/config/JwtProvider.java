@@ -1,5 +1,7 @@
 package com.frankit.shop.domain.auth.config;
 
+import com.frankit.shop.domain.auth.common.RoleEnum;
+import com.frankit.shop.domain.auth.dto.AuthResponse;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.domain.auth.handler.JwtHandler;
@@ -20,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.frankit.shop.domain.auth.common.RoleEnum.DEFAULT;
 import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
@@ -36,7 +39,7 @@ public class JwtProvider {
         return jwtHandler.createJwt(Map.of(USER_EMAIL, privateClaims.getEmail(), USER_ROLE, privateClaims.getAuthority()), expireTime);
     }
 
-    //토큰 재발급에서 쓰임 - Refresh Token이 유효한지 확인
+    // 정합성 비교 후 값이 일치한다면 새로운 Claims 값을 리턴해줌
     public PrivateClaims parseRefreshToken(String requestRefreshToken, String storedRefreshToken) {
         if (!requestRefreshToken.equals(storedRefreshToken)) {
             throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
@@ -93,6 +96,17 @@ public class JwtProvider {
 //    }
 
     private PrivateClaims convert(Claims claims) {
-        return PrivateClaims.of(claims.get(USER_EMAIL, String.class),  Collections.singleton((GrantedAuthority) claims.get(USER_ROLE)));
+        String email = PrivateClaims.convertType(claims.get(USER_EMAIL));
+        Object rolesObject = claims.get(USER_ROLE);
+        Set<RoleEnum> authorities = new HashSet<>();
+
+        if (rolesObject instanceof List<?>) {
+            authorities = ((List<?>) rolesObject).stream()
+                    .map(Object::toString)
+                    .map(RoleEnum::valueOf)
+                    .collect(Collectors.toSet());
+        }
+
+        return PrivateClaims.of(email, authorities);
     }
 }
