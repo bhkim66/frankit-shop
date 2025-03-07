@@ -13,7 +13,7 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Set;
 
-import static com.frankit.shop.domain.auth.common.RoleEnum.USER;
+import static com.frankit.shop.domain.auth.common.RoleEnum.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -30,7 +30,7 @@ class JwtProviderTest {
     @Test
     void generateToken() throws BadRequestException {
         //given
-        String accessToken = createToken("testerKim123", Set.of(USER), 10 * 1000L);
+        String accessToken = createToken("testerKim123", Set.of(ROLE_USER), 10 * 1000L);
         //when
         Authentication authentication = jwtProvider.validateToken(accessToken);
         //then
@@ -43,7 +43,7 @@ class JwtProviderTest {
     @Test
     void failToValidateWithInvalidToken() {
         //given
-        String accessToken = createToken("testerKim123", Set.of(USER), 30 * 1000L);
+        String accessToken = createToken("testerKim123", Set.of(ROLE_USER), 30 * 1000L);
 
         //when
         Authentication authentication = jwtProvider.validateToken(accessToken + "fail");
@@ -56,7 +56,7 @@ class JwtProviderTest {
     @Test
     void failToValidateWthExpiredToken() throws InterruptedException {
         //given
-        String accessToken = createToken("testerKim123", Set.of(USER),  1000L);
+        String accessToken = createToken("testerKim123", Set.of(ROLE_USER),  1000L);
         Thread.sleep(2000);
 
         //when
@@ -70,7 +70,7 @@ class JwtProviderTest {
     @Test
     void getAuthentication() {
         //given
-        String accessToken = createToken("testerKim123", Set.of(USER),  30 * 1000L);
+        String accessToken = createToken("testerKim123", Set.of(ROLE_USER),  30 * 1000L);
 
         //when
         Authentication authentication = jwtProvider.getAuthentication(accessToken);
@@ -84,7 +84,7 @@ class JwtProviderTest {
     @Test
     void invalidTokenGetAuthentication() {
         //given
-        String accessToken = createToken("testerKim123", Set.of(USER),  30 * 1000L);
+        String accessToken = createToken("testerKim123", Set.of(ROLE_USER),  30 * 1000L);
 
         //when & then
         assertThatThrownBy(() -> jwtProvider.getAuthentication(accessToken + "fail"))
@@ -95,7 +95,7 @@ class JwtProviderTest {
     @Test
     void validValueCanParseRefreshToken() {
         //given
-        String refreshToken = createToken("testerKim123", Set.of(USER),  30 * 1000L);
+        String refreshToken = createToken("testerKim123", Set.of(ROLE_USER),  30 * 1000L);
 
         //when
         PrivateClaims privateClaims = jwtProvider.parseRefreshToken(refreshToken, refreshToken);

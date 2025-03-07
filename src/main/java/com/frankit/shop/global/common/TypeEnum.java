@@ -9,9 +9,6 @@ public enum TypeEnum {
     Y("true"),
     N("false"),
 
-    M("male"),
-    F("female")
-
     ;
 
     private final String value;

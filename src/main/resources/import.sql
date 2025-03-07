@@ -1,0 +1,1 @@
+INSERT INTO users (id, email, password, name, role) VALUES (1, 'testerKim123@naver.com', '$2a$10$NzatKRqe3sNsO4/b2TWBOemzvu9I0jSbmiQANxlBiYkUCV7ZpFGU.', '테스터', 'ROLE_USER');

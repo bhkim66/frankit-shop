@@ -4,7 +4,6 @@ import com.frankit.shop.global.common.ApiResponseResult;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.NestedExceptionUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,13 +16,6 @@ import java.util.Optional;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionAdvice {
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponseResult<?>> handleException(Exception e, HttpServletRequest request) {
-        log.error("[Exception] cause ={}, message ={}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
-        ExceptionEnum error = ExceptionEnum.INTERNAL_SERVER_ERROR;
-        return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error));
-    }
-
     // Custom 오류에 대한 처리
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponseResult<?>> handleApiException(ApiException e) {
@@ -56,6 +48,13 @@ public class GlobalExceptionAdvice {
                 .map(FieldError::getDefaultMessage)
                 .orElse("");
         return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error.getErrorCode(), message));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponseResult<?>> handleException(Exception e, HttpServletRequest request) {
+        log.error("[Exception] cause ={}, message ={}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
+        ExceptionEnum error = ExceptionEnum.INTERNAL_SERVER_ERROR;
+        return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error));
     }
 
 //    private boolean checkingApiDocs(HttpServletRequest request) {

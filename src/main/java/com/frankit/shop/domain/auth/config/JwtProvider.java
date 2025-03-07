@@ -1,7 +1,6 @@
 package com.frankit.shop.domain.auth.config;
 
 import com.frankit.shop.domain.auth.common.RoleEnum;
-import com.frankit.shop.domain.auth.dto.AuthResponse;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.domain.auth.handler.JwtHandler;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.frankit.shop.domain.auth.common.RoleEnum.DEFAULT;
+import static com.frankit.shop.domain.auth.common.RoleEnum.ROLE_DEFAULT;
 import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
 
 @Slf4j
@@ -73,7 +72,7 @@ public class JwtProvider {
                 claims.get(USER_ROLE)));
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        CustomUserDetail principal = CustomUserDetail.of(User.of((String) claims.get(USER_EMAIL), DEFAULT));
+        CustomUserDetail principal = CustomUserDetail.of(User.of((String) claims.get(USER_EMAIL), ROLE_DEFAULT));
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 

@@ -47,9 +47,12 @@ public class AuthService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         PrivateClaims claims = PrivateClaims.of(user.getEmail(), user.getStringAuthorities());
 
-        return AuthResponse.Token.of(
-                createToken(claims, ACCESS_TOKEN_EXPIRE_TIME),
-                createToken(claims, REFRESH_TOKEN_EXPIRE_TIME));
+        String accessToken = createToken(claims, ACCESS_TOKEN_EXPIRE_TIME);
+        String refreshToken = createToken(claims, REFRESH_TOKEN_EXPIRE_TIME);
+        Token token = Token.of(signIn.getEmail(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
+        // redis에 Token 저장
+        tokenHandlingService.save(token);
+        return AuthResponse.Token.of(accessToken, refreshToken);
     }
 
     public boolean signOut() {

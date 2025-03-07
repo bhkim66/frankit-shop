@@ -37,7 +37,7 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                                .requestMatchers("/auth/**", "/common/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                .requestMatchers("/v1/auth/**", "/common/**", "h2-console","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )
                 .exceptionHandling(exceptionHandling ->

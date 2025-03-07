@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
@@ -35,7 +34,7 @@ class CustomUserDetailsServiceTest {
     @Test
     void findUserByEmail() {
         //given
-        User user = User.of("testKim123", RoleEnum.USER);
+        User user = User.of("testKim123", RoleEnum.ROLE_USER);
         when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
         //when

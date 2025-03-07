@@ -4,7 +4,7 @@ import com.frankit.shop.domain.auth.api.service.AuthService;
 import com.frankit.shop.domain.auth.dto.AuthRequest;
 import com.frankit.shop.domain.auth.dto.AuthResponse;
 import com.frankit.shop.global.common.ApiResponseResult;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<ApiResponseResult<AuthResponse.Token>> signIn(@RequestBody AuthRequest.SignIn signIn) {
+    public ResponseEntity<ApiResponseResult<AuthResponse.Token>> signIn(@RequestBody @Valid AuthRequest.SignIn signIn) {
         return ResponseEntity.ok(ApiResponseResult.success(authService.signIn(signIn)));
     }
 
@@ -26,8 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/reissueToken")
-    public ResponseEntity<ApiResponseResult<AuthResponse.Token>> reissueToken(@RequestHeader(value = "refreshToken") String refreshToken) {
+    public ResponseEntity<ApiResponseResult<AuthResponse.Token>> reissueToken(@RequestHeader(value = "Authorization") String refreshToken) {
         return ResponseEntity.ok(ApiResponseResult.success(authService.reissueToken(refreshToken)));
     }
-
 }

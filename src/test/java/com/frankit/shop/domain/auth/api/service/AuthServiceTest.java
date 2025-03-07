@@ -51,7 +51,7 @@ class AuthServiceTest {
     @Test
     void signInGetToken() {
         //given
-        User user = User.of("testerKim123", RoleEnum.USER);
+        User user = User.of("testerKim123", RoleEnum.ROLE_USER);
 
         AuthRequest.SignIn signIn = AuthRequest.SignIn.of("testerKim123", "pass123");
         CustomUserDetail userDetail = CustomUserDetail.of(user);

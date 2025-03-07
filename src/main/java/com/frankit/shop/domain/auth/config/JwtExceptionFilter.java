@@ -12,8 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static org.springframework.http.HttpStatus.*;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
  * Security 인증/인가 과정에서 생기는 오류 처리
@@ -29,7 +29,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         res.setContentType("application/json; charset=UTF-8");
         res.getWriter().write(resultSrt);
-        res.setStatus(SC_BAD_REQUEST);
+        res.setStatus(SC_UNAUTHORIZED);
         res.flushBuffer();
     }
 

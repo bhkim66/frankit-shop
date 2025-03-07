@@ -1,9 +1,8 @@
 package com.frankit.shop.domain.auth.handler;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -32,10 +31,18 @@ public class JwtHandler {
     }
 
     public Optional<Claims> parseClaims(String token) {
-        return Optional.of(Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody());
+        try {
+            return Optional.of(Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody());
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException(e);
+        } catch (JwtException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

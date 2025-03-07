@@ -15,17 +15,20 @@ import java.util.stream.Collectors;
 
 public class CustomUserDetail implements UserDetails {
     private final String email;
+    private final String password;
     private final Set<GrantedAuthority> authorities;
 
     @Builder
-    private CustomUserDetail(String email, Set<GrantedAuthority> authorities) {
+    private CustomUserDetail(String email, String password, Set<GrantedAuthority> authorities) {
         this.email = email;
+        this.password = password;
         this.authorities = authorities;
     }
 
     public static CustomUserDetail of(User user) {
         return CustomUserDetail.builder()
                 .email(user.getEmail())
+                .password(user.getPassword())
                 .authorities(getGrantedAuthoritySet(user.getRole()))
                 .build();
     }
@@ -58,6 +61,6 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public String getPassword() {
-        throw new UnsupportedOperationException();
+        return password;
     }
 }
