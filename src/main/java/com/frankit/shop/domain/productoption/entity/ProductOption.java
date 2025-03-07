@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import static com.frankit.shop.global.common.TypeEnum.N;
 import static com.frankit.shop.global.common.TypeEnum.Y;
@@ -34,6 +35,7 @@ public class ProductOption {
     private int extraPrice;
 
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'N'")
     private TypeEnum delYn;
 
     @Builder

@@ -42,7 +42,7 @@ public class ProductServiceTest {
         Product product2 = createProductStep("휴대폰", "휴대폰입니다", 1_500_000, 5000);
         Product product3 = createProductStep("스피커", "스피커입니다", 500_000, 3000);
 
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(product1, product2, product3)));
+        when(productRepository.findByListIdAndDelYnN(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(product1, product2, product3)));
 
         //when
         Pageable page = PageRequest.of(0, 10);
@@ -56,7 +56,7 @@ public class ProductServiceTest {
                         tuple("휴대폰", "휴대폰입니다", 1_500_000),
                         tuple("스피커", "스피커입니다", 500_000)
                 );
-        verify(productRepository, times(1)).findAll(any(Pageable.class));
+        verify(productRepository, times(1)).findByListIdAndDelYnN(any(Pageable.class));
     }
 
     @DisplayName("하나의 상품을 등록할 수 있다")
@@ -82,7 +82,7 @@ public class ProductServiceTest {
         //given
         Product product = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
 
-        when(productRepository.findById(anyLong())).thenReturn(of(product));
+        when(productRepository.findByIdAndDelYnN(anyLong())).thenReturn(of(product));
 
         //when
         ProductRequest productRequest = ProductRequest.of("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
@@ -91,14 +91,14 @@ public class ProductServiceTest {
         //then
         assertThat(result).extracting("name", "description", "price")
                 .containsExactly("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000);
-        verify(productRepository, times(1)).findById(anyLong());
+        verify(productRepository, times(1)).findByIdAndDelYnN(anyLong());
     }
 
     @DisplayName("하나의 상품을 수정하려 할 때 찾는 상품이 없으면 예외가 발생한다")
     @Test
     void updateProductNotFound() {
         //given
-        when(productRepository.findById(anyLong())).thenReturn(empty());
+        when(productRepository.findByIdAndDelYnN(anyLong())).thenReturn(empty());
         ProductRequest productRequest = ProductRequest.of("신형 컴퓨터", "더 비싸진 컴퓨터입니다", 1_500_000, 5000);
 
         //when & then
@@ -107,7 +107,7 @@ public class ProductServiceTest {
                 .extracting("e")
                 .extracting("errorCode", "errorMessage")
                 .containsExactlyInAnyOrder("GLO_404_01", "요청한 요소를 찾을 수 없습니다.");
-        verify(productRepository, times(1)).findById(anyLong());
+        verify(productRepository, times(1)).findByIdAndDelYnN(anyLong());
     }
 
     @DisplayName("하나의 상품을 삭제할 수 있다")
@@ -116,21 +116,21 @@ public class ProductServiceTest {
         //given
         Product product = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
 
-        when(productRepository.findById(anyLong())).thenReturn(of(product));
+        when(productRepository.findByIdAndDelYnN(anyLong())).thenReturn(of(product));
 
         //when
         Product deletedProduct = productService.deleteProduct(1L);
 
         //then
         assertThat(deletedProduct).extracting("delYn").isEqualTo(Y);
-        verify(productRepository, times(1)).findById(anyLong());
+        verify(productRepository, times(1)).findByIdAndDelYnN(anyLong());
     }
 
     @DisplayName("하나의 상품을 삭제 하는데 상품이 없다면 예외가 발생한다")
     @Test
     void deleteNotExistProduct() {
         //given
-        when(productRepository.findById(anyLong())).thenReturn(empty());
+        when(productRepository.findByIdAndDelYnN(anyLong())).thenReturn(empty());
 
         //when & then
         assertThatThrownBy(() -> productService.deleteProduct(1L))
@@ -138,7 +138,7 @@ public class ProductServiceTest {
                 .extracting("e")
                 .extracting("errorCode", "errorMessage")
                 .containsExactlyInAnyOrder("GLO_404_01", "요청한 요소를 찾을 수 없습니다.");
-        verify(productRepository, times(1)).findById(anyLong());
+        verify(productRepository, times(1)).findByIdAndDelYnN(anyLong());
     }
 
     private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {

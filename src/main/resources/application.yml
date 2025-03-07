@@ -19,6 +19,10 @@ spring:
   config:
     activate:
       on-profile: local
+  sql:
+    init:
+      mode: always 
+      data-locations: classpath:data.sql  # data.sql 파일이 실행될 수 있음
 
   jpa:
     hibernate:
@@ -47,6 +51,9 @@ spring:
   config:
     activate:
       on-profile: test
+  sql:
+    init:
+      mode: never
 
   jpa:
     hibernate:

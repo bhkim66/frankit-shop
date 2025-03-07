@@ -16,3 +16,10 @@ INSERT INTO product (name, description, price, delivery_fee) VALUES ('유니폼2
 INSERT INTO product (name, description, price, delivery_fee) VALUES ('유니폼3', '유니폼입니다', '110000', '5000');
 INSERT INTO product (name, description, price, delivery_fee) VALUES ('유니폼4', '유니폼입니다', '110000', '5000');
 INSERT INTO product (name, description, price, delivery_fee) VALUES ('유니폼5', '유니폼입니다', '110000', '5000');
+
+INSERT INTO product_option (product_id, name, type, extra_price) VALUES (1, 'FREE', 'S', 0);
+INSERT INTO product_option (product_id, name, type, extra_price) VALUES (2, 'FREE', 'S', 0);
+INSERT INTO product_option (product_id, name, type, extra_price) VALUES (3, 'FREE', 'S', 0);
+INSERT INTO product_option (product_id, name, type, extra_price) VALUES (11, '스몰', 'I', 0);
+INSERT INTO product_option (product_id, name, type, extra_price) VALUES (11, '미디움', 'I', 0);
+INSERT INTO product_option (product_id, name, type, extra_price) VALUES (11, '라지', 'I', 0);

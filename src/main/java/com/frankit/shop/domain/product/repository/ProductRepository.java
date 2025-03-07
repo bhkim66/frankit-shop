@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("select p from Product p where p.delYn = 'N'")
+    @Query("select p from Product p left join fetch p.productOptions po where p.delYn = 'N' and (po.delYn = 'N' or po is NULL)")
     Page<Product> findByListIdAndDelYnN(Pageable page);
 
-    @Query("select p from Product p where p.id = :id and p.delYn = 'N'")
+    @Query("select p from Product p left join fetch p.productOptions po where p.id = :id and p.delYn = 'N' and (po.delYn = 'N' or po is NULL)")
     Optional<Product> findByIdAndDelYnN(Long id);
 }
