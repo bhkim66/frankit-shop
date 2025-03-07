@@ -47,7 +47,7 @@ public class JwtProvider {
     }
 
     // 토큰 정보를 검증하는 메서드
-    public Authentication validateToken(String token) {
+    public Authentication validateTokenReturnAUthentication(String token) {
         try {
             jwtHandler.parseClaims(token);
             return getAuthentication(token);
@@ -60,7 +60,7 @@ public class JwtProvider {
         } catch (IllegalArgumentException e) {
             log.error("[validateTokenException] JWT claims string is empty.");
         }
-        return null;
+        throw new ApiException(INVALID_TOKEN_VALUE_ERROR);
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드

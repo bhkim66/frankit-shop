@@ -30,19 +30,11 @@ public class JwtHandler {
                 .compact();
     }
 
-    public Optional<Claims> parseClaims(String token) {
-        try {
+    public Optional<Claims> parseClaims(String token) throws ExpiredJwtException, JwtException, IllegalArgumentException{
             return Optional.of(Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody());
-        } catch (ExpiredJwtException e) {
-            throw new RuntimeException(e);
-        } catch (JwtException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

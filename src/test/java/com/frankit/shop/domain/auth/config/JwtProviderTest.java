@@ -4,7 +4,7 @@ import com.frankit.shop.domain.auth.common.RoleEnum;
 import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.domain.auth.handler.JwtHandler;
 import com.frankit.shop.global.exception.ApiException;
-import io.jsonwebtoken.security.SignatureException;
+import io.jsonwebtoken.security.SecurityException;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +32,7 @@ class JwtProviderTest {
         //given
         String accessToken = createToken("testerKim123", Set.of(ROLE_USER), 10 * 1000L);
         //when
-        Authentication authentication = jwtProvider.validateToken(accessToken);
+        Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken);
         //then
         assertThat(authentication.getPrincipal())
                 .extracting("email")
@@ -46,7 +46,7 @@ class JwtProviderTest {
         String accessToken = createToken("testerKim123", Set.of(ROLE_USER), 30 * 1000L);
 
         //when
-        Authentication authentication = jwtProvider.validateToken(accessToken + "fail");
+        Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken + "fail");
 
         //then
         assertThat(authentication).isNull();
@@ -60,7 +60,7 @@ class JwtProviderTest {
         Thread.sleep(2000);
 
         //when
-        Authentication authentication = jwtProvider.validateToken(accessToken);
+        Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken);
 
         //then
         assertThat(authentication).isNull();
@@ -73,7 +73,7 @@ class JwtProviderTest {
         String accessToken = createToken("testerKim123", Set.of(ROLE_USER),  30 * 1000L);
 
         //when
-        Authentication authentication = jwtProvider.getAuthentication(accessToken);
+        Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken);
 
         //then
         assertThat(authentication.getPrincipal())
@@ -87,8 +87,11 @@ class JwtProviderTest {
         String accessToken = createToken("testerKim123", Set.of(ROLE_USER),  30 * 1000L);
 
         //when & then
-        assertThatThrownBy(() -> jwtProvider.getAuthentication(accessToken + "fail"))
-                .isInstanceOf(SignatureException.class);
+        assertThatThrownBy(() -> jwtProvider.validateTokenReturnAUthentication(accessToken + "fail"))
+                .isInstanceOf(ApiException.class)
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactly("AUT_401_02", "유효하지 않은 토큰 입니다.");
     }
 
     @DisplayName("request refreshToken 값과 저장된 값이 같으면 정상적인 값을 반환한다")
