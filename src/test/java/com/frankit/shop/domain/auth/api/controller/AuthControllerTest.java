@@ -30,7 +30,7 @@ class AuthControllerTest {
         given()
                 .log().all()
                 .contentType("application/json")
-                .body("{\"email\":\"testerKim123@naver.com\"" +
+                .body("{\"email\":\"usertest123@naver.com\"" +
                         ", \"password\":\"password123\"}")
         .when()
                 .post("/api/v1/auth/sign-in")
@@ -65,7 +65,7 @@ class AuthControllerTest {
         given()
                 .log().all()
                 .contentType("application/json")
-                .body("{\"email\":\"testerKim123@naver.com\"" +
+                .body("{\"email\":\"usertest123@naver.com\"" +
                         ", \"password\":\"password123\"}")
         .when()
                 .post("/api/v1/auth/sign-in")
@@ -92,7 +92,7 @@ class AuthControllerTest {
                 given()
                         .log().all()
                         .contentType("application/json")
-                        .body("{\"email\":\"testerKim123@naver.com\"" +
+                        .body("{\"email\":\"usertest123@naver.com\"" +
                                 ", \"password\":\"password123\"}")
                         .when()
                         .post("/api/v1/auth/sign-in")
@@ -104,7 +104,7 @@ class AuthControllerTest {
                 .log().all()
                 .header("Authorization", refreshToken + "fail")
                 .when()
-                .post("/api/v1/auth/reissueToken")
+                .post("/api/v1/auth/reissue-token")
                 .then()
                 .log().all()
                 .statusCode(401)

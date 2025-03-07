@@ -18,7 +18,7 @@ class RedisRepositoryTest {
     @Test
     void saveValueInRedis() {
         //given
-        Token token = Token.of("testerKim123@naver.com", "refreshToken123", 10*1000L);
+        Token token = Token.of("usertest123@naver.com", "refreshToken123", 10*1000L);
         Token save = redisRepository.save(token);
 
         //when
@@ -27,14 +27,14 @@ class RedisRepositoryTest {
         //then
         assertThat(selectedToken)
                 .extracting("key", "refreshToken")
-                .containsExactlyInAnyOrder("testerKim123@naver.com", "refreshToken123");
+                .containsExactlyInAnyOrder("usertest123@naver.com", "refreshToken123");
     }
 
     @DisplayName("redis에 원하는 값을 출력할 수 있다")
     @Test
     void selectValueInRedis() {
         //given
-        Token token = Token.of("testerKim123@naver.com", "refreshToken123", 10*1000L);
+        Token token = Token.of("usertest123@naver.com", "refreshToken123", 10*1000L);
         redisRepository.save(token);
 
         Token token1 = Token.of("testerKim321", "refreshToken321", 10*1000L);
@@ -53,14 +53,14 @@ class RedisRepositoryTest {
     @Test
     void expiredValueCanNotFoundValue() throws InterruptedException {
         //given
-        Token token = Token.of("testerKim123@naver.com", "refreshToken123", 1000L);
+        Token token = Token.of("usertest123@naver.com", "refreshToken123", 1000L);
         redisRepository.save(token);
 
         // 유효시간 1초에 2초 쉬고 체크
         Thread.sleep(2 * 1000L);
 
         //when
-        Token selectedToken = redisRepository.findById("testerKim123@naver.com").orElse(null);
+        Token selectedToken = redisRepository.findById("usertest123@naver.com").orElse(null);
         //then
         assertThat(selectedToken).isNull();
     }
@@ -70,12 +70,12 @@ class RedisRepositoryTest {
     @Test
     void deleteValueInRedis() {
         //given
-        Token token = Token.of("testerKim123@naver.com", "refreshToken123", 10*1000L);
+        Token token = Token.of("usertest123@naver.com", "refreshToken123", 10*1000L);
         redisRepository.save(token);
 
         //when
-        redisRepository.deleteById("testerKim123@naver.com");
-        Token selectedToken = redisRepository.findById("testerKim123@naver.com").orElse(null);
+        redisRepository.deleteById("usertest123@naver.com");
+        Token selectedToken = redisRepository.findById("usertest123@naver.com").orElse(null);
 
         //then
         assertThat(selectedToken).isNull();

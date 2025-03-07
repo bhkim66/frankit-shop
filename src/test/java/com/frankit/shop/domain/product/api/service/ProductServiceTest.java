@@ -1,6 +1,5 @@
 package com.frankit.shop.domain.product.api.service;
 
-import com.frankit.shop.domain.product.api.service.ProductService;
 import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.domain.product.entity.Product;
@@ -47,7 +46,7 @@ public class ProductServiceTest {
 
         //when
         Pageable page = PageRequest.of(0, 10);
-        Page<ProductResponse> products = productService.getProducts(page);
+        Page<ProductResponse> products = productService.selectProducts(page);
 
         //then
         assertThat(products.getContent()).hasSize(3)
@@ -62,7 +61,7 @@ public class ProductServiceTest {
 
     @DisplayName("하나의 상품을 등록할 수 있다")
     @Test
-    void createProduct() {
+    void ofProduct() {
         //given
         Product product = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
 
@@ -143,6 +142,6 @@ public class ProductServiceTest {
     }
 
     private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
-        return Product.create(productName, productDescription, price, deliveryFee);
+        return Product.of(productName, productDescription, price, deliveryFee);
     }
 }

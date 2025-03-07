@@ -1,7 +1,7 @@
 package com.frankit.shop.domain.auth.entity;
 
 import com.frankit.shop.domain.auth.common.RoleEnum;
-import com.frankit.shop.domain.user.entity.User;
+import com.frankit.shop.domain.user.entity.Users;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,11 +24,11 @@ public class CustomUserDetail implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static CustomUserDetail of(User user) {
+    public static CustomUserDetail of(Users users) {
         return CustomUserDetail.builder()
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .authorities(getGrantedAuthoritySet(user.getRole()))
+                .email(users.getEmail())
+                .password(users.getPassword())
+                .authorities(getGrantedAuthoritySet(users.getRole()))
                 .build();
     }
 
@@ -45,7 +44,7 @@ public class CustomUserDetail implements UserDetails {
         return this.authorities
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .map(RoleEnum::valueOf)
+                .map(RoleEnum::findByVal)
                 .collect(Collectors.toSet());
     }
 

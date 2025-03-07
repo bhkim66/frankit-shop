@@ -28,7 +28,7 @@ class AuthRequestTest {
     @Test
     void validateRequest() {
         //given
-        String email = "testerKim123@naver.com";
+        String email = "usertest123@naver.com";
         String password = "password123";
         AuthRequest.SignIn signIn = AuthRequest.SignIn.of(email, password);
         Set<ConstraintViolation<AuthRequest.SignIn>> validate = validatorFromFactory.validate(signIn);

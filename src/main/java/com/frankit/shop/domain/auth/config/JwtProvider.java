@@ -4,7 +4,7 @@ import com.frankit.shop.domain.auth.common.RoleEnum;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.domain.auth.handler.JwtHandler;
-import com.frankit.shop.domain.user.entity.User;
+import com.frankit.shop.domain.user.entity.Users;
 import com.frankit.shop.global.exception.ApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,7 +23,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.frankit.shop.domain.auth.common.RoleEnum.ROLE_DEFAULT;
+import static com.frankit.shop.domain.auth.common.RoleEnum.DEFAULT;
+import static com.frankit.shop.global.exception.ExceptionEnum.ILLEGAL_ARGUMENT_ERROR;
 import static com.frankit.shop.global.exception.ExceptionEnum.INVALID_TOKEN_VALUE_ERROR;
 
 @Slf4j
@@ -66,13 +67,17 @@ public class JwtProvider {
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String token) {
         // 토큰 복호화
-        Claims claims = jwtHandler.parseClaims(token).orElseThrow();
+        Claims claims = jwtHandler.parseClaims(token).orElseThrow(() -> new ApiException(ILLEGAL_ARGUMENT_ERROR));
         // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" +
-                claims.get(USER_ROLE)));
+        List claimsList = (List) claims.get(USER_ROLE);
+
+        Collection<? extends GrantedAuthority> authorities =
+                (Collection<? extends GrantedAuthority>) claimsList.stream().map(c -> new SimpleGrantedAuthority("ROLE_" + c.toString()))
+                .collect(Collectors.toSet());
+
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        CustomUserDetail principal = CustomUserDetail.of(User.of((String) claims.get(USER_EMAIL), ROLE_DEFAULT));
+        CustomUserDetail principal = CustomUserDetail.of(Users.of((String) claims.get(USER_EMAIL), DEFAULT));
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 

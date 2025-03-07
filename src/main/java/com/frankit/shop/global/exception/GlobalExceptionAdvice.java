@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -57,8 +59,16 @@ public class GlobalExceptionAdvice {
         return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error));
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponseResult<?>> handleAccessDeniedException(AuthorizationDeniedException e, HttpServletRequest request) {
+        printErrorMessage(e, request);
+        ExceptionEnum error = ExceptionEnum.ACCESS_DENIED_MEMBER;
+        return ResponseEntity.status(error.getStatus()).body(ApiResponseResult.failure(error));
+    }
+
+
     private static void printErrorMessage(Exception e, HttpServletRequest request) {
-        log.error("[ApiException] Request URL: {} , cause: {} , message: {}",
+        log.error("Request URL: {} , cause: {} , message: {}",
                 request.getRequestURI(),
                 NestedExceptionUtils.getMostSpecificCause(e),
                 e.getMessage());

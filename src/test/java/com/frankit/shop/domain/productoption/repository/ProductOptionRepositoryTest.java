@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -37,12 +36,12 @@ public class ProductOptionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        Product product = createProductStep("유니폼", "유니폼입니다", 100_000, 5000);
+        Product product = ofProductStep("유니폼", "유니폼입니다", 100_000, 5000);
         Product save = productRepository.save(product);
 
-        ProductOption option1 = createProductOptionStep(save,"스몰", I, 0);
-        ProductOption option2 = createProductOptionStep(save, "미디움", I, 500);
-        ProductOption option3 = createProductOptionStep(save, "라지", I, 1000);
+        ProductOption option1 = ofProductOptionStep(save,"스몰", I, 0);
+        ProductOption option2 = ofProductOptionStep(save, "미디움", I, 500);
+        ProductOption option3 = ofProductOptionStep(save, "라지", I, 1000);
 
         productOptionRepository.saveAll(List.of(option1, option2, option3));
     }
@@ -76,7 +75,7 @@ public class ProductOptionRepositoryTest {
     @Test
     void selectProductOptionNotFound() {
         //given
-        Product product = createProductStep("유니폼2", "유니폼2입니다", 200_000, 5000);
+        Product product = ofProductStep("유니폼2", "유니폼2입니다", 200_000, 5000);
         Product save = productRepository.save(product);
         //when
         List<ProductOption> productOptions = productOptionRepository.findProductOptions(save.getId());
@@ -89,9 +88,9 @@ public class ProductOptionRepositoryTest {
     @Test
     void insertProductOption() {
         //given
-        Product product = createProductStep("유니폼2", "유니폼2입니다", 200_000, 5000);
+        Product product = ofProductStep("유니폼2", "유니폼2입니다", 200_000, 5000);
         Product saveProduct = productRepository.save(product);
-        ProductOption newOption = createProductOptionStep(saveProduct, "엑스트라 라지", I, 2000);
+        ProductOption newOption = ofProductOptionStep(saveProduct, "엑스트라 라지", I, 2000);
         //when
         ProductOption savedOption = productOptionRepository.save(newOption);
 
@@ -129,11 +128,11 @@ public class ProductOptionRepositoryTest {
         assertThat(deletedOption).extracting("delYn").isEqualTo(Y);
     }
 
-    private static ProductOption createProductOptionStep(Product product, String optionName, OptionType optionType, int price) {
+    private static ProductOption ofProductOptionStep(Product product, String optionName, OptionType optionType, int price) {
         return ProductOption.create(product, optionName, optionType, price);
     }
 
-    private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
-        return Product.create(productName, productDescription, price, deliveryFee);
+    private Product ofProductStep(String productName, String productDescription, int price, int deliveryFee) {
+        return Product.of(productName, productDescription, price, deliveryFee);
     }
 }

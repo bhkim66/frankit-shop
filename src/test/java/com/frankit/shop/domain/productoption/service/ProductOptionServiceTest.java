@@ -44,10 +44,10 @@ public class ProductOptionServiceTest {
     @Test
     void addProductOptionsInputType() {
         //given
-        Product product = createProductStep("유니폼", "유니폼입니다", 100_000, 5000);
-        ProductOption option1 = createProductOptionStep(null,"스몰", I, 0);
-        ProductOption option2 = createProductOptionStep(null, "미디움", I, 500);
-        ProductOption option3 = createProductOptionStep(null, "라지", I, 1000);
+        Product product = ofProductStep("유니폼", "유니폼입니다", 100_000, 5000);
+        ProductOption option1 = ofProductOptionStep(null,"스몰", I, 0);
+        ProductOption option2 = ofProductOptionStep(null, "미디움", I, 500);
+        ProductOption option3 = ofProductOptionStep(null, "라지", I, 1000);
 
         when(productOptionRepository.saveAll(anyList())).thenReturn(List.of(option1, option2, option3));
         when(productRepository.getReferenceById(anyLong())).thenReturn(product);
@@ -77,10 +77,10 @@ public class ProductOptionServiceTest {
     @Test
     void addProductOptionsSelectType() {
         //given
-        Product product = createProductStep("유니폼", "유니폼입니다", 100_000, 5000);
-        ProductOption option1 = createProductOptionStep(null,"S", S, 0);
-        ProductOption option2 = createProductOptionStep(null, "M", S, 500);
-        ProductOption option3 = createProductOptionStep(null, "L", S, 1000);
+        Product product = ofProductStep("유니폼", "유니폼입니다", 100_000, 5000);
+        ProductOption option1 = ofProductOptionStep(null,"S", S, 0);
+        ProductOption option2 = ofProductOptionStep(null, "M", S, 500);
+        ProductOption option3 = ofProductOptionStep(null, "L", S, 1000);
 
         when(productOptionRepository.saveAll(anyList())).thenReturn(List.of(option1, option2, option3));
         when(productRepository.getReferenceById(anyLong())).thenReturn(product);
@@ -110,9 +110,9 @@ public class ProductOptionServiceTest {
     @Test
     void addProductTotalOptionsLessThenThree() {
         //given
-        ProductOption option1 = createProductOptionStep(null, "S", S, 0);
-        ProductOption option2 = createProductOptionStep(null, "M", S, 500);
-        ProductOption option3 = createProductOptionStep(null, "L", S, 1000);
+        ProductOption option1 = ofProductOptionStep(null, "S", S, 0);
+        ProductOption option2 = ofProductOptionStep(null, "M", S, 500);
+        ProductOption option3 = ofProductOptionStep(null, "L", S, 1000);
 
         when(productOptionRepository.findProductOptions(anyLong())).thenReturn(List.of(option1, option2, option3));
 
@@ -135,7 +135,7 @@ public class ProductOptionServiceTest {
     @Test
     void addProductOptionsSameExistOptionType() {
         //given
-        ProductOption option = createProductOptionStep(null, "S", S, 0);
+        ProductOption option = ofProductOptionStep(null, "S", S, 0);
 
         when(productOptionRepository.findProductOptions(anyLong())).thenReturn(List.of(option));
 
@@ -158,14 +158,14 @@ public class ProductOptionServiceTest {
     @Test
     void selectProductOptions() {
         //given
-        ProductOption option1 = createProductOptionStep(null,"스몰", I, 0);
-        ProductOption option2 = createProductOptionStep(null, "미디움", I, 500);
-        ProductOption option3 = createProductOptionStep(null, "라지", I, 1000);
+        ProductOption option1 = ofProductOptionStep(null,"스몰", I, 0);
+        ProductOption option2 = ofProductOptionStep(null, "미디움", I, 500);
+        ProductOption option3 = ofProductOptionStep(null, "라지", I, 1000);
 
         when(productOptionRepository.findProductOptions(anyLong())).thenReturn(List.of(option1, option2, option3));
 
         //when
-        List<ProductOptionResponse> productOptions = productOptionService.findProductOptions(1L);
+        List<ProductOptionResponse> productOptions = productOptionService.selectProductOptions(1L);
 
         //then
         assertThat(productOptions).hasSize(3)
@@ -182,7 +182,7 @@ public class ProductOptionServiceTest {
     @Test
     void updateProductOption() {
         //given
-        ProductOption option = createProductOptionStep(null,"스몰", I, 0);
+        ProductOption option = ofProductOptionStep(null,"스몰", I, 0);
         when(productOptionRepository.findProductOption(anyLong())).thenReturn(of(option));
 
         //when
@@ -199,7 +199,7 @@ public class ProductOptionServiceTest {
     @Test
     void updateProductOptionNotEqualsType() {
         //given
-        ProductOption option = createProductOptionStep(null,"스몰", I, 0);
+        ProductOption option = ofProductOptionStep(null,"스몰", I, 0);
         when(productOptionRepository.findProductOption(anyLong())).thenReturn(of(option));
 
         //when & then
@@ -231,7 +231,7 @@ public class ProductOptionServiceTest {
     @Test
     void deleteProductOption() {
         //given
-        ProductOption option1 = createProductOptionStep(null,"스몰", I, 0);
+        ProductOption option1 = ofProductOptionStep(null,"스몰", I, 0);
 
         when(productOptionRepository.findProductOption(anyLong())).thenReturn(of(option1));
 
@@ -258,11 +258,11 @@ public class ProductOptionServiceTest {
         verify(productOptionRepository, times(1)).findProductOption(anyLong());
     }
 
-    private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
-        return Product.create(productName, productDescription, price, deliveryFee);
+    private Product ofProductStep(String productName, String productDescription, int price, int deliveryFee) {
+        return Product.of(productName, productDescription, price, deliveryFee);
     }
 
-    private static ProductOption createProductOptionStep(Product product, String optionName, OptionType optionType, int price) {
+    private static ProductOption ofProductOptionStep(Product product, String optionName, OptionType optionType, int price) {
         return ProductOption.create(product, optionName, optionType, price);
     }
 }

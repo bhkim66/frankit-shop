@@ -7,7 +7,7 @@ import com.frankit.shop.domain.auth.dto.AuthRequest;
 import com.frankit.shop.domain.auth.dto.AuthResponse;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
 import com.frankit.shop.domain.auth.entity.PrivateClaims;
-import com.frankit.shop.domain.user.entity.User;
+import com.frankit.shop.domain.user.entity.Users;
 import com.frankit.shop.global.exception.ApiException;
 import com.frankit.shop.global.redis.entity.Token;
 import org.junit.jupiter.api.DisplayName;
@@ -51,10 +51,10 @@ class AuthServiceTest {
     @Test
     void signInGetToken() {
         //given
-        User user = User.of("testerKim123", RoleEnum.ROLE_USER);
+        Users users = Users.of("usertest123", RoleEnum.USER);
 
-        AuthRequest.SignIn signIn = AuthRequest.SignIn.of("testerKim123", "pass123");
-        CustomUserDetail userDetail = CustomUserDetail.of(user);
+        AuthRequest.SignIn signIn = AuthRequest.SignIn.of("usertest123", "pass123");
+        CustomUserDetail userDetail = CustomUserDetail.of(users);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
         when(authenticationManagerBuilder.getObject()).thenReturn(authenticationManager);
@@ -74,7 +74,7 @@ class AuthServiceTest {
     @DisplayName("유저 정보를 없다면 예외가 발생한다")
     @Test
     void signInNotFoundUser() {
-        AuthRequest.SignIn signIn = AuthRequest.SignIn.of("testerKim123", "pass123");
+        AuthRequest.SignIn signIn = AuthRequest.SignIn.of("usertest123", "pass123");
 
         when(authenticationManagerBuilder.getObject()).thenReturn(authenticationManager);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
@@ -97,12 +97,12 @@ class AuthServiceTest {
     void validTokenCanReissueToken() {
         //given
         String refreshToken = "refreshToken123";
-        String userEmail = "testerKim123";
+        String userEmail = "usertest123";
         Token token = Token.of(userEmail, refreshToken, 10 * 1000L);
 
         when(jwtProvider.getCurrentUserEmail()).thenReturn(userEmail);
         when(tokenHandlingService.findById(anyString())).thenReturn(token);
-        when(jwtProvider.parseRefreshToken(anyString(), anyString())).thenReturn(PrivateClaims.of("testerKim123", null));
+        when(jwtProvider.parseRefreshToken(anyString(), anyString())).thenReturn(PrivateClaims.of("usertest123", null));
         when(jwtProvider.generateToken(any(PrivateClaims.class), anyLong())).thenReturn("newAccessToken", "newRefreshToken");
         when(tokenHandlingService.save(any(Token.class))).thenReturn(token);
 
@@ -125,7 +125,7 @@ class AuthServiceTest {
     void invalidTokenCanNotReissueToken() {
         //given
         String refreshToken = "refreshToken123";
-        String userEmail = "testerKim123";
+        String userEmail = "usertest123";
         Token token = Token.of(userEmail, refreshToken, 10 * 1000L);
 
         when(jwtProvider.getCurrentUserEmail()).thenReturn(userEmail);

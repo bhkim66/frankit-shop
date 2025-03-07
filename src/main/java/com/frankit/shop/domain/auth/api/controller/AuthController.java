@@ -25,7 +25,7 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponseResult.success(authService.signOut()));
     }
 
-    @PostMapping("/reissueToken")
+    @PostMapping("/reissue-token")
     public ResponseEntity<ApiResponseResult<AuthResponse.Token>> reissueToken(@RequestHeader(value = "Authorization") String refreshToken) {
         return ResponseEntity.ok(ApiResponseResult.success(authService.reissueToken(refreshToken)));
     }

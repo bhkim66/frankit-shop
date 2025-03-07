@@ -26,6 +26,8 @@ public enum ExceptionEnum {
     UNAUTHORIZED_MEMBER(HttpStatus.UNAUTHORIZED, "AUT_401_01", "인증되지 않은 멤버 접근입니다."),
     /** 토큰이 유효하지 않을 때 or 로그아웃 된 토큰으로 인증 요청할 때 */
     INVALID_TOKEN_VALUE_ERROR(HttpStatus.UNAUTHORIZED, "AUT_401_02", "유효하지 않은 토큰 입니다."),
+    /** 권한이 없는 멤버 접근 */
+    ACCESS_DENIED_MEMBER(HttpStatus.FORBIDDEN, "AUT_403_01", "권한이 없는 멤버의 접근입니다."),
     USERNAME_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "AUT_404_01", "존재하지 않는 사용자입니다."),
 
     /** REDIS ERROR */

@@ -15,6 +15,7 @@ import static com.frankit.shop.global.common.TypeEnum.Y;
 
 @Entity
 @Getter
+@Table(name = "product_option")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductOption {
     @Id

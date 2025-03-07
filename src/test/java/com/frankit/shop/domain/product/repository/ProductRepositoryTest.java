@@ -34,9 +34,9 @@ public class ProductRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        Product product1 = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
-        Product product2 = createProductStep("휴대폰", "휴대폰입니다", 1_500_000, 5000);
-        Product product3 = createProductStep("스피커", "스피커입니다", 500_000, 3000);
+        Product product1 = ofProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
+        Product product2 = ofProductStep("휴대폰", "휴대폰입니다", 1_500_000, 5000);
+        Product product3 = ofProductStep("스피커", "스피커입니다", 500_000, 3000);
 
         productRepository.saveAll(List.of(product1, product2, product3));
     }
@@ -54,7 +54,7 @@ public class ProductRepositoryTest {
         PageRequest page = PageRequest.of(0, 10);
 
         //when
-        Page<Product> products = productRepository.findByDelYn(page);
+        Page<Product> products = productRepository.findByListIdAndDelYnN(page);
 
         //then
         assertThat(products.getContent()).hasSize(3)
@@ -76,7 +76,7 @@ public class ProductRepositoryTest {
         em.flush();
 
         //when
-        Page<Product> products = productRepository.findByDelYn(page);
+        Page<Product> products = productRepository.findByListIdAndDelYnN(page);
 
         //then
         assertThat(products.getContent()).hasSize(2)
@@ -87,11 +87,26 @@ public class ProductRepositoryTest {
                 );
     }
 
+    @DisplayName("하나의 상품을 조회힌다")
+    @Test
+    void selectProduct() {
+        //given
+        Long productId = 1L;
+
+        //when
+        Product product = productRepository.findByIdAndDelYnN(productId).orElse(null);
+
+        //then
+        assertThat(product.getName()).isEqualTo("컴퓨터");
+        assertThat(product.getDescription()).isEqualTo("컴퓨터입니다");
+        assertThat(product.getPrice()).isEqualTo(1_000_000);
+    }
+
     @DisplayName("새로운 상품을 등록한다")
     @Test
     void insertProduct() {
         //given
-        Product product = createProductStep("장난감", "장난감입니다", 100_000, 5000);
+        Product product = ofProductStep("장난감", "장난감입니다", 100_000, 5000);
         Product savedProduct = productRepository.save(product);
 
         //when
@@ -122,8 +137,8 @@ public class ProductRepositoryTest {
                 .containsExactlyInAnyOrder("컴퓨터 ver2.0", "다음 모델 컴퓨터입니다", 2_000_000);
     }
 
-    private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
-        return Product.create(productName, productDescription, price, deliveryFee);
+    private Product ofProductStep(String productName, String productDescription, int price, int deliveryFee) {
+        return Product.of(productName, productDescription, price, deliveryFee);
     }
 
 }

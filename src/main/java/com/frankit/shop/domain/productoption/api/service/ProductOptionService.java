@@ -31,7 +31,7 @@ public class ProductOptionService {
         return List.of(SelectTypeOption.values());
     }
 
-    public List<ProductOptionResponse> findProductOptions(Long productId) {
+    public List<ProductOptionResponse> selectProductOptions(Long productId) {
         return productOptionRepository.findProductOptions(productId)
                 .stream().map(ProductOptionResponse::of).toList();
     }

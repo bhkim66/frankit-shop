@@ -2,7 +2,7 @@ package com.frankit.shop.domain.auth.api.service;
 
 import com.frankit.shop.domain.auth.common.RoleEnum;
 import com.frankit.shop.domain.auth.entity.CustomUserDetail;
-import com.frankit.shop.domain.user.entity.User;
+import com.frankit.shop.domain.user.entity.Users;
 import com.frankit.shop.domain.user.repository.UserRepository;
 import com.frankit.shop.global.exception.ApiException;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CustomUserDetailsServiceTest {
+class CustomUsersDetailsServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -34,14 +34,14 @@ class CustomUserDetailsServiceTest {
     @Test
     void findUserByEmail() {
         //given
-        User user = User.of("testKim123", RoleEnum.ROLE_USER);
-        when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
+        Users users = Users.of("testKim123", RoleEnum.USER);
+        when(userRepository.findById(anyString())).thenReturn(Optional.of(users));
 
         //when
         CustomUserDetail userDetails = (CustomUserDetail) customUserDetailsService.loadUserByUsername("testKim123");
 
         //then
-        assertThat(userDetails.getEmail()).isEqualTo(user.getEmail());
+        assertThat(userDetails.getEmail()).isEqualTo(users.getEmail());
         assertThat(userDetails.getAuthorities())
                 .hasSize(1)
                 .extracting(GrantedAuthority::getAuthority)

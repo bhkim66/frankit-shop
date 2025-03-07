@@ -4,7 +4,6 @@ import com.frankit.shop.domain.auth.common.RoleEnum;
 import com.frankit.shop.domain.auth.entity.PrivateClaims;
 import com.frankit.shop.domain.auth.handler.JwtHandler;
 import com.frankit.shop.global.exception.ApiException;
-import io.jsonwebtoken.security.SecurityException;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +12,7 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Set;
 
-import static com.frankit.shop.domain.auth.common.RoleEnum.ROLE_USER;
+import static com.frankit.shop.domain.auth.common.RoleEnum.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -30,20 +29,20 @@ class JwtProviderTest {
     @Test
     void generateToken() throws BadRequestException {
         //given
-        String accessToken = createToken("testerKim123", Set.of(ROLE_USER), 10 * 1000L);
+        String accessToken = createToken("usertest123", Set.of(USER), 10 * 1000L);
         //when
         Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken);
         //then
         assertThat(authentication.getPrincipal())
                 .extracting("email")
-                .isEqualTo("testerKim123");
+                .isEqualTo("usertest123");
     }
 
     @DisplayName("유효하지 않는 토큰은 예외가 발생한다")
     @Test
     void failToValidateWithInvalidToken() {
         //given
-        String accessToken = createToken("testerKim123", Set.of(ROLE_USER), 30 * 1000L);
+        String accessToken = createToken("usertest123", Set.of(USER), 30 * 1000L);
 
         //when
         Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken + "fail");
@@ -56,7 +55,7 @@ class JwtProviderTest {
     @Test
     void failToValidateWthExpiredToken() throws InterruptedException {
         //given
-        String accessToken = createToken("testerKim123", Set.of(ROLE_USER),  1000L);
+        String accessToken = createToken("usertest123", Set.of(USER),  1000L);
         Thread.sleep(2000);
 
         //when
@@ -70,21 +69,21 @@ class JwtProviderTest {
     @Test
     void getAuthentication() {
         //given
-        String accessToken = createToken("testerKim123", Set.of(ROLE_USER),  30 * 1000L);
+        String accessToken = createToken("usertest123", Set.of(USER),  30 * 1000L);
 
         //when
         Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken);
 
         //then
         assertThat(authentication.getPrincipal())
-                .extracting("email").isEqualTo("testerKim123");
+                .extracting("email").isEqualTo("usertest123");
     }
 
     @DisplayName("잘못된 토큰을 복호화하여 예외가 발생한다")
     @Test
     void invalidTokenGetAuthentication() {
         //given
-        String accessToken = createToken("testerKim123", Set.of(ROLE_USER),  30 * 1000L);
+        String accessToken = createToken("usertest123", Set.of(USER),  30 * 1000L);
 
         //when & then
         assertThatThrownBy(() -> jwtProvider.validateTokenReturnAUthentication(accessToken + "fail"))
@@ -98,14 +97,14 @@ class JwtProviderTest {
     @Test
     void validValueCanParseRefreshToken() {
         //given
-        String refreshToken = createToken("testerKim123", Set.of(ROLE_USER),  30 * 1000L);
+        String refreshToken = createToken("usertest123", Set.of(USER),  30 * 1000L);
 
         //when
         PrivateClaims privateClaims = jwtProvider.parseRefreshToken(refreshToken, refreshToken);
 
         //then
         assertThat(privateClaims)
-                .extracting("email").isEqualTo("testerKim123");
+                .extracting("email").isEqualTo("usertest123");
     }
 
     @DisplayName("request refreshToken 값과 저장된 값이 같으면 다르면 예외가 발생한다")

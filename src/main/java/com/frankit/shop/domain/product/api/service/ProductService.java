@@ -19,8 +19,13 @@ import static com.frankit.shop.global.exception.ExceptionEnum.NOT_FOUND_ERROR;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public Page<ProductResponse> getProducts(Pageable page) {
-        return productRepository.findAll(page).map(ProductResponse::of);
+    public Page<ProductResponse> selectProducts(Pageable page) {
+        return productRepository.findByListIdAndDelYnN(page).map(ProductResponse::of);
+    }
+
+    public ProductResponse selectProduct(Long productId) {
+        return ProductResponse.of(productRepository.findByIdAndDelYnN(productId)
+                .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR)));
     }
 
     @Transactional
@@ -30,15 +35,16 @@ public class ProductService {
 
     @Transactional
     public Product updateProduct(Long productId, ProductRequest productRequest) {
-        return productRepository.findById(productId)
+        return productRepository.findByIdAndDelYnN(productId)
                 .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR))
                 .update(productRequest);
     }
 
     @Transactional
     public Product deleteProduct(Long productId) {
-        return productRepository.findById(productId)
+        return productRepository.findByIdAndDelYnN(productId)
                 .orElseThrow(() -> new ApiException(NOT_FOUND_ERROR))
                 .delete();
     }
+
 }

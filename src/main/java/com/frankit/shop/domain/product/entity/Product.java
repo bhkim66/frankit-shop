@@ -6,6 +6,7 @@ import com.frankit.shop.global.common.TypeEnum;
 import com.frankit.shop.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +15,9 @@ import static com.frankit.shop.global.common.TypeEnum.*;
 
 @Entity
 @Getter
+@Table(name = "product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,6 +31,7 @@ public class Product extends BaseEntity {
     private int deliveryFee;
 
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'N'")
     private TypeEnum delYn;
 
     @OneToMany(mappedBy = "product")
@@ -44,7 +46,7 @@ public class Product extends BaseEntity {
         this.delYn = N;
     }
 
-    public static Product create(String name, String description, int price, int deliveryFee) {
+    public static Product of(String name, String description, int price, int deliveryFee) {
         return Product.builder()
                 .name(name)
                 .description(description)

@@ -1,10 +1,10 @@
 package com.frankit.shop.domain.auth.config;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,9 +24,11 @@ import java.util.Arrays;
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
-@EnableMethodSecurity
+@EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,8 +42,10 @@ public class WebSecurityConfig {
                                 .requestMatchers("/v1/auth/**", "h2-console","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated() // 모든 요청은 인증 필요
                 )
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
+                .exceptionHandling(e ->
+                        e.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                                .accessDeniedHandler(jwtAccessDeniedHandler)
+                        )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
