@@ -76,7 +76,7 @@ class AuthControllerTest {
                 .log().all()
                 .header("Authorization", refreshToken)
         .when()
-                .post("/api/v1/auth/reissueToken")
+                .post("/api/v1/auth/reissue-token")
         .then()
                 .log().all()
                 .statusCode(200)

@@ -137,7 +137,7 @@ class AuthServiceTest {
                 .isInstanceOf(ApiException.class)
                 .extracting("e")
                 .extracting("errorCode", "errorMessage")
-                .containsExactly("AUT_401_02", "유효하지 않은 토큰 입니다.");
+                .containsExactly("AUT_400_01", "유효하지 않은 토큰 입니다.");
 
         verify(jwtProvider, times(1)).getCurrentUserEmail();
         verify(tokenHandlingService, times(1)).findById(anyString());
