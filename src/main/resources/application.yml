@@ -30,7 +30,7 @@ spring:
     properties:
       hibernate:
         format_sql: true         # 쿼리 로그 포맷 (정렬)
-        #show_sql: true           # 쿼리 로그 출력
+        show_sql: true           # 쿼리 로그 출력
     defer-datasource-initialization: true # hibernate가 초기화 후 스키마 생성, 데이터 생성
 
   output:
@@ -62,8 +62,8 @@ spring:
     properties:
       hibernate:
         format_sql: true         # 쿼리 로그 포맷 (정렬)
-        #show_sql: true
+        show_sql: true
   redis:
-    host: "127.0.0.1"
+    host: "localhost"
     port: 6379
     password:

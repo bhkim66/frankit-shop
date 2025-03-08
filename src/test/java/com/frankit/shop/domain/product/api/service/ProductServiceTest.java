@@ -3,7 +3,9 @@ package com.frankit.shop.domain.product.api.service;
 import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.domain.product.entity.Product;
+import com.frankit.shop.domain.product.repository.ProductConditionRepository;
 import com.frankit.shop.domain.product.repository.ProductRepository;
+import com.frankit.shop.global.condition.ProductCondition;
 import com.frankit.shop.global.exception.ApiException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,6 +59,30 @@ public class ProductServiceTest {
                         tuple("스피커", "스피커입니다", 500_000)
                 );
         verify(productRepository, times(1)).findByListIdAndDelYnN(any(Pageable.class));
+    }
+
+    @DisplayName("상품을 조건 검색하여 조회할 수 있다")
+    @Test
+    void selectInspectingProducts() {
+        //given
+        Product product1 = createProductStep("컴퓨터", "컴퓨터입니다", 1_000_000, 5000);
+        Product product2 = createProductStep("최신컴퓨터", "최신컴퓨터입니다", 1_500_000, 5000);
+
+        when(productRepository.findByProductsWithCondition(any(Pageable.class), any(ProductCondition.class))).thenReturn(new PageImpl<>(List.of(product1, product2)));
+
+        //when
+        Pageable page = PageRequest.of(0, 10);
+        ProductCondition condition = ProductCondition.of("컴퓨터", null, 0, 0);
+        Page<ProductResponse> products = productService.selectProductsCondition(page, condition);
+
+        //then
+        assertThat(products.getContent()).hasSize(2)
+                .extracting("name", "description", "price")
+                .containsExactlyInAnyOrder(
+                        tuple("컴퓨터", "컴퓨터입니다", 1_000_000),
+                        tuple("최신컴퓨터", "최신컴퓨터입니다", 1_500_000)
+                );
+        verify(productRepository, times(1)).findByProductsWithCondition(any(Pageable.class), any(ProductCondition.class));
     }
 
     @DisplayName("하나의 상품을 등록할 수 있다")

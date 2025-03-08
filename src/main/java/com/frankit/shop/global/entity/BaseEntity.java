@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@EnableJpaAuditing
 @Getter
 public abstract class BaseEntity {
     @CreatedDate
