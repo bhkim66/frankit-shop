@@ -2,18 +2,21 @@ package com.frankit.shop.domain.product.api.controller;
 
 import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.entity.Product;
+import com.frankit.shop.global.condition.ProductCondition;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Profile;
 
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
+@Profile("local")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProductControllerTest {
     private static String accessToken;
@@ -35,25 +38,28 @@ class ProductControllerTest {
                 .body().jsonPath().getString("data.accessToken");
     }
 
-    @DisplayName("토큰을 발급 받은 유저는 상품을 조회할 수 있다")
+    @DisplayName("토큰을 발급 받은 유저는 상품 검색 조회할 수 있다")
     @Test
-    void validTokenGetProducts() {
+    void validTokenGetProductsWithCondition() {
         given()
                 .log().all()
                 .header("Authorization", accessToken)
                 .queryParams(Map.of(
-                        "page", 0,
-                        "size", 10))
+                         "page", 0
+                        ,"size", 10
+                        ,"name", "컴퓨터"
+                        ,"startPrice", 1000)
+                )
         .when()
                 .get("/api/v1/product")
         .then()
                 .log().all()
                 .statusCode(200)
                 .body("success", equalTo(true)
-                ,"data.content",  hasSize(10)
-                , "data.pageable.pageNumber", equalTo(0)
-                , "data.pageable.pageSize", equalTo(10)
-        );
+                        , "data.page.number", equalTo(0)
+                        , "data.page.size", equalTo(10)
+                        , "data.page.totalElements", equalTo(5)
+                );
     }
 
     @DisplayName("토큰이 없으면 상품을 조회할 수 없다")
@@ -187,7 +193,7 @@ class ProductControllerTest {
                 .header("Authorization", accessToken)
                 .contentType("application/json")
         .when()
-                .delete("/api/v1/product/1")
+                .delete("/api/v1/product/10")
         .then()
                 .log().all()
                 .statusCode(200)
@@ -212,7 +218,7 @@ class ProductControllerTest {
                 .header("Authorization", accessToken)
                 .contentType("application/json")
         .when()
-                .delete("/api/v1/product/1")
+                .delete("/api/v1/product/10")
         .then()
                 .log().all()
                 .statusCode(403)

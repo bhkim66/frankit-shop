@@ -4,11 +4,13 @@ import com.frankit.shop.domain.product.api.service.ProductService;
 import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.global.common.ApiResponseResult;
+import com.frankit.shop.global.condition.ProductCondition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +24,10 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     private final ProductService productService;
 
-    @Operation(summary = "여러개의 상품을 페이징 조회힌다", description = "상품 목록 조회")
+    @Operation(summary = "여러개의 검색 조건과 함께 상품을 페이징 조회힌다", description = "상품 목록 조회")
     @GetMapping
-    public ResponseEntity<ApiResponseResult<Page<ProductResponse>>> selectProducts(@PageableDefault(page = 0, size = 10) Pageable page) {
-        return ResponseEntity.ok(ApiResponseResult.success(productService.selectProducts(page)));
+    public ResponseEntity<ApiResponseResult<Page<ProductResponse>>> selectProductsWithCondition(ProductCondition condition, Pageable page) {
+        return ResponseEntity.ok(ApiResponseResult.success(productService.selectProductsCondition(page, condition)));
     }
 
     @Operation(summary = "하나의 상품을 조회힌다", description = "상품 조회")

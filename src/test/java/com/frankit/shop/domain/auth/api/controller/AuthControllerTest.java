@@ -93,7 +93,7 @@ class AuthControllerTest {
                         .contentType("application/json")
                         .body("{\"email\":\"usertest123@naver.com\"" +
                                 ", \"password\":\"password123\"}")
-                        .when()
+                .when()
                         .post("/api/v1/auth/sign-in")
                         .body().jsonPath().getString("data.refreshToken")
                 ;
@@ -102,9 +102,9 @@ class AuthControllerTest {
         given()
                 .log().all()
                 .header("Authorization", refreshToken + "fail")
-                .when()
+        .when()
                 .post("/api/v1/auth/reissue-token")
-                .then()
+        .then()
                 .log().all()
                 .statusCode(401)
                 .body("success", equalTo(false)
