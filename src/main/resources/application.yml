@@ -21,7 +21,7 @@ spring:
       on-profile: local
   sql:
     init:
-      mode: always 
+      mode: always
       data-locations: classpath:data.sql  # data.sql 파일이 실행될 수 있음
 
   jpa:
@@ -31,6 +31,7 @@ spring:
       hibernate:
         format_sql: true         # 쿼리 로그 포맷 (정렬)
         #show_sql: true           # 쿼리 로그 출력
+    defer-datasource-initialization: true # hibernate가 초기화 후 스키마 생성, 데이터 생성
 
   output:
     ansi:
@@ -63,6 +64,6 @@ spring:
         format_sql: true         # 쿼리 로그 포맷 (정렬)
         #show_sql: true
   redis:
-    host: "localhost"
+    host: "127.0.0.1"
     port: 6379
-    password: 6024
+    password:
