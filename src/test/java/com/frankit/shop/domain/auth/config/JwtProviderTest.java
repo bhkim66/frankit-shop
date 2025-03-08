@@ -44,11 +44,12 @@ class JwtProviderTest {
         //given
         String accessToken = createToken("usertest123", Set.of(USER), 30 * 1000L);
 
-        //when
-        Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken + "fail");
-
-        //then
-        assertThat(authentication).isNull();
+        //when & then
+        assertThatThrownBy(() ->jwtProvider.validateTokenReturnAUthentication(accessToken + "fail"))
+                .isInstanceOf(ApiException.class)
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactly("AUT_400_01", "유효하지 않은 토큰 입니다.");
     }
 
     @DisplayName("유효기간이 지난 토큰은 예외가 발생한다")
@@ -58,11 +59,12 @@ class JwtProviderTest {
         String accessToken = createToken("usertest123", Set.of(USER),  1000L);
         Thread.sleep(2000);
 
-        //when
-        Authentication authentication = jwtProvider.validateTokenReturnAUthentication(accessToken);
-
-        //then
-        assertThat(authentication).isNull();
+        //when & then
+        assertThatThrownBy(() ->jwtProvider.validateTokenReturnAUthentication(accessToken + "fail"))
+                .isInstanceOf(ApiException.class)
+                .extracting("e")
+                .extracting("errorCode", "errorMessage")
+                .containsExactly("AUT_400_01", "유효하지 않은 토큰 입니다.");
     }
 
     @DisplayName("토큰을 복호화하여 토큰 정보를 가져올 수 있다")
@@ -90,7 +92,7 @@ class JwtProviderTest {
                 .isInstanceOf(ApiException.class)
                 .extracting("e")
                 .extracting("errorCode", "errorMessage")
-                .containsExactly("AUT_401_02", "유효하지 않은 토큰 입니다.");
+                .containsExactly("AUT_400_01", "유효하지 않은 토큰 입니다.");
     }
 
     @DisplayName("request refreshToken 값과 저장된 값이 같으면 정상적인 값을 반환한다")
@@ -119,7 +121,7 @@ class JwtProviderTest {
                 .isInstanceOf(ApiException.class)
                 .extracting("e")
                 .extracting("errorCode", "errorMessage")
-                .containsExactly("AUT_401_02", "유효하지 않은 토큰 입니다.");
+                .containsExactly("AUT_400_01", "유효하지 않은 토큰 입니다.");
     }
 
     private String createToken(String email, Set<RoleEnum> role, Long expiredTime) {

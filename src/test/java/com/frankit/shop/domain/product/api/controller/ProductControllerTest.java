@@ -143,7 +143,7 @@ class ProductControllerTest {
                 .contentType("application/json")
                 .body(productRequest)
         .when()
-                .put("/api/v1/product/1")
+                .put("/api/v1/product/10")
         .then()
                 .log().all()
                 .statusCode(200)
