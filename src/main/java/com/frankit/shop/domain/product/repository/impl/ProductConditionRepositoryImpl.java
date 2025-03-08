@@ -24,9 +24,10 @@ public class ProductConditionRepositoryImpl implements ProductConditionRepositor
 
     @Override
     public Page<Product> findByProductsWithCondition(Pageable page, ProductCondition condition) {
-        List<Product> content = queryFactory
-                .selectFrom(product)
-                .leftJoin(product.productOptions, productOption)
+        // product id만 뽑아오는 쿼리
+        List<Long> ids = queryFactory
+                .select(product.id)
+                .from(product)
                 .where(nameContain(condition.getName()),
                         priceLoe(condition.getEndPrice()),
                         priceGoe(condition.getStartPrice()),
@@ -34,6 +35,12 @@ public class ProductConditionRepositoryImpl implements ProductConditionRepositor
                 )
                 .offset(page.getOffset())
                 .limit(page.getPageSize())
+                .fetch();
+
+        List<Product> content = queryFactory
+                .selectFrom(product)
+                .leftJoin(product.productOptions, productOption).fetchJoin()
+                .where(product.id.in(ids))
                 .fetch();
 
         JPAQuery<Long> count = queryFactory
