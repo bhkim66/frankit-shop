@@ -36,7 +36,7 @@ public class ProductOptionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        Product product = ofProductStep("유니폼", "유니폼입니다", 100_000, 5000);
+        Product product = createProductStep("유니폼", "유니폼입니다", 100_000, 5000);
         Product save = productRepository.save(product);
 
         ProductOption option1 = ofProductOptionStep(save,"스몰", I, 0);
@@ -75,7 +75,7 @@ public class ProductOptionRepositoryTest {
     @Test
     void selectProductOptionNotFound() {
         //given
-        Product product = ofProductStep("유니폼2", "유니폼2입니다", 200_000, 5000);
+        Product product = createProductStep("유니폼2", "유니폼2입니다", 200_000, 5000);
         Product save = productRepository.save(product);
         //when
         List<ProductOption> productOptions = productOptionRepository.findProductOptions(save.getId());
@@ -88,7 +88,7 @@ public class ProductOptionRepositoryTest {
     @Test
     void insertProductOption() {
         //given
-        Product product = ofProductStep("유니폼2", "유니폼2입니다", 200_000, 5000);
+        Product product = createProductStep("유니폼2", "유니폼2입니다", 200_000, 5000);
         Product saveProduct = productRepository.save(product);
         ProductOption newOption = ofProductOptionStep(saveProduct, "엑스트라 라지", I, 2000);
         //when
@@ -132,7 +132,7 @@ public class ProductOptionRepositoryTest {
         return ProductOption.create(product, optionName, optionType, price);
     }
 
-    private Product ofProductStep(String productName, String productDescription, int price, int deliveryFee) {
+    private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
         return Product.of(productName, productDescription, price, deliveryFee);
     }
 }

@@ -44,7 +44,7 @@ public class ProductOptionServiceTest {
     @Test
     void addProductOptionsInputType() {
         //given
-        Product product = ofProductStep("유니폼", "유니폼입니다", 100_000, 5000);
+        Product product = createProductStep("유니폼", "유니폼입니다", 100_000, 5000);
         ProductOption option1 = ofProductOptionStep(null,"스몰", I, 0);
         ProductOption option2 = ofProductOptionStep(null, "미디움", I, 500);
         ProductOption option3 = ofProductOptionStep(null, "라지", I, 1000);
@@ -77,7 +77,7 @@ public class ProductOptionServiceTest {
     @Test
     void addProductOptionsSelectType() {
         //given
-        Product product = ofProductStep("유니폼", "유니폼입니다", 100_000, 5000);
+        Product product = createProductStep("유니폼", "유니폼입니다", 100_000, 5000);
         ProductOption option1 = ofProductOptionStep(null,"S", S, 0);
         ProductOption option2 = ofProductOptionStep(null, "M", S, 500);
         ProductOption option3 = ofProductOptionStep(null, "L", S, 1000);
@@ -258,7 +258,7 @@ public class ProductOptionServiceTest {
         verify(productOptionRepository, times(1)).findProductOption(anyLong());
     }
 
-    private Product ofProductStep(String productName, String productDescription, int price, int deliveryFee) {
+    private Product createProductStep(String productName, String productDescription, int price, int deliveryFee) {
         return Product.of(productName, productDescription, price, deliveryFee);
     }
 

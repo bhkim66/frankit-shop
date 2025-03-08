@@ -4,6 +4,7 @@ import com.frankit.shop.domain.product.dto.ProductRequest;
 import com.frankit.shop.domain.product.dto.ProductResponse;
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductRepository;
+import com.frankit.shop.global.condition.ProductCondition;
 import com.frankit.shop.global.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,10 @@ public class ProductService {
 
     public Page<ProductResponse> selectProducts(Pageable page) {
         return productRepository.findByListIdAndDelYnN(page).map(ProductResponse::of);
+    }
+
+    public Page<ProductResponse> selectProductsCondition(Pageable page, ProductCondition condition) {
+        return productRepository.findByProductsWithCondition(page, condition).map(ProductResponse::of);
     }
 
     public ProductResponse selectProduct(Long productId) {
