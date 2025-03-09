@@ -9,10 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequestMapping("/v1/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthApiSpecification {
     private final AuthService authService;
 
     @PostMapping("/sign-in")

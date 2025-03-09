@@ -1,6 +1,8 @@
 package com.frankit.shop.global.common;
 
 import com.frankit.shop.global.exception.ExceptionEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

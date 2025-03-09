@@ -48,7 +48,7 @@ class ProductControllerTest {
                          "page", 0
                         ,"size", 10
                         ,"name", "컴퓨터"
-                        ,"startPrice", 1000)
+                        ,"minPrice", 1000)
                 )
         .when()
                 .get("/api/v1/product")

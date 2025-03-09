@@ -3,7 +3,6 @@ package com.frankit.shop.domain.product.repository.impl;
 import com.frankit.shop.domain.product.entity.Product;
 import com.frankit.shop.domain.product.repository.ProductConditionRepository;
 import com.frankit.shop.global.condition.ProductCondition;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -29,8 +28,8 @@ public class ProductConditionRepositoryImpl implements ProductConditionRepositor
                 .select(product.id)
                 .from(product)
                 .where(nameContain(condition.getName()),
-                        priceLoe(condition.getEndPrice()),
-                        priceGoe(condition.getStartPrice()),
+                        priceLoe(condition.getMaxPrice()),
+                        priceGoe(condition.getMinPrice()),
                         delYnIsN()
                 )
                 .offset(page.getOffset())
@@ -47,8 +46,8 @@ public class ProductConditionRepositoryImpl implements ProductConditionRepositor
                 .select(product.count())
                 .from(product)
                 .where(nameContain(condition.getName()),
-                        priceLoe(condition.getEndPrice()),
-                        priceGoe(condition.getStartPrice()),
+                        priceLoe(condition.getMaxPrice()),
+                        priceGoe(condition.getMinPrice()),
                         delYnIsN());
 
         return PageableExecutionUtils.getPage(content, page, count::fetchOne);

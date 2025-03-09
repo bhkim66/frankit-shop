@@ -4,6 +4,8 @@ import com.frankit.shop.domain.productoption.api.service.ProductOptionService;
 import com.frankit.shop.domain.productoption.dto.ProductOptionRequest;
 import com.frankit.shop.domain.productoption.dto.ProductOptionResponse;
 import com.frankit.shop.global.common.ApiResponseResult;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/product-option")
 @RequiredArgsConstructor
-public class ProductOptionController {
+public class ProductOptionController implements ProductOptionApiSpecification {
     private final ProductOptionService productOptionService;
 
     @GetMapping("/{productId}")
@@ -31,7 +33,7 @@ public class ProductOptionController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponseResult<Void>> updateProductOption(@PathVariable("id") Long id, @RequestBody ProductOptionRequest productOptionRequest){
+    public ResponseEntity<ApiResponseResult<Void>> updateProductOption(@PathVariable("id") Long id, @RequestBody ProductOptionRequest productOptionRequest) {
         productOptionService.updateProductOption(id, productOptionRequest);
         return ResponseEntity.ok(ApiResponseResult.success());
     }
